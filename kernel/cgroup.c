@@ -1364,7 +1364,6 @@ static int cgroup_remount(struct super_block *sb, int *flags, char *data)
 	if (opts.flags != root->flags ||
 	    (opts.name && strcmp(opts.name, root->name))) {
 		ret = -EINVAL;
-		drop_parsed_module_refcounts(opts.subsys_mask);
 		goto out_unlock;
 	}
 
@@ -1379,7 +1378,6 @@ static int cgroup_remount(struct super_block *sb, int *flags, char *data)
 	if (ret) {
 		/* rebind_subsystems failed, re-populate the removed files */
 		cgroup_populate_dir(cgrp, false, removed_mask);
-		drop_parsed_module_refcounts(opts.subsys_mask);
 		goto out_unlock;
 	}
 
@@ -1394,6 +1392,8 @@ static int cgroup_remount(struct super_block *sb, int *flags, char *data)
 	mutex_unlock(&cgroup_root_mutex);
 	mutex_unlock(&cgroup_mutex);
 	mutex_unlock(&cgrp->dentry->d_inode->i_mutex);
+	if (ret)
+		drop_parsed_module_refcounts(opts.subsys_mask);
 	return ret;
 }
 
@@ -3992,33 +3992,16 @@ static int cgroup_clone_children_write(struct cgroup *cgrp,
 	return 0;
 }
 
-/*
- * for the common functions, 'private' gives the type of file
- */
-/* for hysterical raisins, we can't put this on the older files */
-#define CGROUP_FILE_GENERIC_PREFIX "cgroup."
-static struct cftype files[] = {
+static struct cftype cgroup_base_files[] = {
 	{
-		.name = "tasks",
-		.open = cgroup_tasks_open,
-		.write_u64 = cgroup_tasks_write,
-		.release = cgroup_pidlist_release,
-		.mode = S_IRUGO | S_IWUSR,
-	},
-	{
-		.name = CGROUP_FILE_GENERIC_PREFIX "procs",
+		.name = "cgroup.procs",
 		.open = cgroup_procs_open,
 		.write_u64 = cgroup_procs_write,
 		.release = cgroup_pidlist_release,
 		.mode = S_IRUGO | S_IWUSR,
 	},
 	{
-		.name = "notify_on_release",
-		.read_u64 = cgroup_read_notify_on_release,
-		.write_u64 = cgroup_write_notify_on_release,
-	},
-	{
-		.name = CGROUP_FILE_GENERIC_PREFIX "event_control",
+		.name = "cgroup.event_control",
 		.write_string = cgroup_write_event_control,
 		.mode = S_IWUGO,
 	},
@@ -4033,9 +4016,29 @@ static struct cftype files[] = {
 		.flags = CFTYPE_ONLY_ON_ROOT,
 		.read_seq_string = cgroup_sane_behavior_show,
 	},
+
+	/*
+	 * Historical crazy stuff.  These don't have "cgroup."  prefix and
+	 * don't exist if sane_behavior.  If you're depending on these, be
+	 * prepared to be burned.
+	 */
+	{
+		.name = "tasks",
+		.flags = CFTYPE_INSANE,		/* use "procs" instead */
+		.open = cgroup_tasks_open,
+		.write_u64 = cgroup_tasks_write,
+		.release = cgroup_pidlist_release,
+		.mode = S_IRUGO | S_IWUSR,
+	},
+	{
+		.name = "notify_on_release",
+		.flags = CFTYPE_INSANE,
+		.read_u64 = cgroup_read_notify_on_release,
+		.write_u64 = cgroup_write_notify_on_release,
+	},
 	{
 		.name = "release_agent",
-		.flags = CFTYPE_ONLY_ON_ROOT,
+		.flags = CFTYPE_INSANE | CFTYPE_ONLY_ON_ROOT,
 		.read_seq_string = cgroup_release_agent_show,
 		.write_string = cgroup_release_agent_write,
 		.max_write_len = PATH_MAX,
@@ -4056,7 +4059,7 @@ static int cgroup_populate_dir(struct cgroup *cgrp, bool base_files,
 	struct cgroup_subsys *ss;
 
 	if (base_files) {
-		err = cgroup_addrm_files(cgrp, NULL, files, true);
+		err = cgroup_addrm_files(cgrp, NULL, cgroup_base_files, true);
 		if (err < 0)
 			return err;
 	}
