@@ -5607,6 +5607,10 @@ static int __init uksm_init(void)
 		kthread_stop(uksm_thread);
 		goto out_free;
 	}
+	uksm_attr_group.name = "ksm";
+	err = sysfs_create_group(mm_kobj, &uksm_attr_group);
+	if (err)
+		printk(KERN_ERR "uksm: register sysfs failed\n");
 #else
 	uksm_run = UKSM_RUN_MERGE;	/* no way for user to start it */
 
