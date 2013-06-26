@@ -5,6 +5,7 @@
 #define _TRACE_POWER_H
 
 #include <linux/ktime.h>
+#include <linux/pm_qos.h>
 #include <linux/tracepoint.h>
 
 DECLARE_EVENT_CLASS(cpu,
@@ -164,6 +165,43 @@ TRACE_EVENT(machine_suspend,
 	),
 
 	TP_printk("state=%lu", (unsigned long)__entry->state)
+);
+
+TRACE_EVENT(device_pm_report_time,
+
+	TP_PROTO(struct device *dev, const char *pm_ops, s64 ops_time,
+		 char *pm_event_str, int error),
+
+	TP_ARGS(dev, pm_ops, ops_time, pm_event_str, error),
+
+	TP_STRUCT__entry(
+		__string(device, dev_name(dev))
+		__string(driver, dev_driver_string(dev))
+		__string(parent, dev->parent ? dev_name(dev->parent) : "none")
+		__string(pm_ops, pm_ops ? pm_ops : "none ")
+		__string(pm_event_str, pm_event_str)
+		__field(s64, ops_time)
+		__field(int, error)
+	),
+
+	TP_fast_assign(
+		const char *tmp = dev->parent ? dev_name(dev->parent) : "none";
+		const char *tmp_i = pm_ops ? pm_ops : "none ";
+
+		__assign_str(device, dev_name(dev));
+		__assign_str(driver, dev_driver_string(dev));
+		__assign_str(parent, tmp);
+		__assign_str(pm_ops, tmp_i);
+		__assign_str(pm_event_str, pm_event_str);
+		__entry->ops_time = ops_time;
+		__entry->error = error;
+	),
+
+	/* ops_str has an extra space at the end */
+	TP_printk("%s %s parent=%s state=%s ops=%snsecs=%lld err=%d",
+		__get_str(driver), __get_str(device), __get_str(parent),
+		__get_str(pm_event_str), __get_str(pm_ops),
+		__entry->ops_time, __entry->error)
 );
 
 DECLARE_EVENT_CLASS(wakeup_source,
@@ -599,6 +637,55 @@ DEFINE_EVENT(timer_status, single_cycle_exit_timer_stop,
 		timer_rate, mode)
 );
 
+/*
+ * The pm qos events are used for pm qos update
+ */
+DECLARE_EVENT_CLASS(pm_qos_update,
+
+	TP_PROTO(enum pm_qos_req_action action, int prev_value, int curr_value),
+
+	TP_ARGS(action, prev_value, curr_value),
+
+	TP_STRUCT__entry(
+		__field( enum pm_qos_req_action, action         )
+		__field( int,                    prev_value     )
+		__field( int,                    curr_value     )
+	),
+
+	TP_fast_assign(
+		__entry->action = action;
+		__entry->prev_value = prev_value;
+		__entry->curr_value = curr_value;
+	),
+
+	TP_printk("action=%s prev_value=%d curr_value=%d",
+		  __print_symbolic(__entry->action,
+			{ PM_QOS_ADD_REQ,	"ADD_REQ" },
+			{ PM_QOS_UPDATE_REQ,	"UPDATE_REQ" },
+			{ PM_QOS_REMOVE_REQ,	"REMOVE_REQ" }),
+		  __entry->prev_value, __entry->curr_value)
+);
+
+DEFINE_EVENT(pm_qos_update, pm_qos_update_target,
+
+	TP_PROTO(enum pm_qos_req_action action, int prev_value, int curr_value),
+
+	TP_ARGS(action, prev_value, curr_value)
+);
+
+DEFINE_EVENT_PRINT(pm_qos_update, pm_qos_update_flags,
+
+	TP_PROTO(enum pm_qos_req_action action, int prev_value, int curr_value),
+
+	TP_ARGS(action, prev_value, curr_value),
+
+	TP_printk("action=%s prev_value=0x%x curr_value=0x%x",
+		  __print_symbolic(__entry->action,
+			{ PM_QOS_ADD_REQ,	"ADD_REQ" },
+			{ PM_QOS_UPDATE_REQ,	"UPDATE_REQ" },
+			{ PM_QOS_REMOVE_REQ,	"REMOVE_REQ" }),
+		  __entry->prev_value, __entry->curr_value)
+);
 #endif /* _TRACE_POWER_H */
 
 /* This part must be outside protection */

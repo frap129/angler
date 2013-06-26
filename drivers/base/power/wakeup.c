@@ -784,7 +784,7 @@ void pm_get_active_wakeup_sources(char *pending_wakeup_source, size_t max)
 }
 EXPORT_SYMBOL_GPL(pm_get_active_wakeup_sources);
 
-static void print_active_wakeup_sources(void)
+void pm_print_active_wakeup_sources(void)
 {
 	struct wakeup_source *ws;
 	int active = 0;
@@ -808,6 +808,7 @@ static void print_active_wakeup_sources(void)
 			last_activity_ws->name);
 	rcu_read_unlock();
 }
+EXPORT_SYMBOL_GPL(pm_print_active_wakeup_sources);
 
 /**
  * pm_wakeup_pending - Check if power transition in progress should be aborted.
@@ -832,8 +833,10 @@ bool pm_wakeup_pending(void)
 	}
 	spin_unlock_irqrestore(&events_lock, flags);
 
-	if (ret)
-		print_active_wakeup_sources();
+	if (ret) {
+		pr_info("PM: Wakeup pending, aborting suspend\n");
+		pm_print_active_wakeup_sources();
+	}
 
 	return ret;
 }
