@@ -4927,6 +4927,9 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
 	unsigned long msecs;
 	int err;
 
+	if (!strcmp(current->comm, "init"))
+		return -EBUSY;
+
 	err = strict_strtoul(buf, 10, &msecs);
 	if (err || msecs > MSEC_PER_SEC)
 		return -EINVAL;
@@ -5402,7 +5405,6 @@ static struct attribute_group uksm_attr_group = {
 static ssize_t pages_volatile_show(struct kobject *kobj,
 				struct kobj_attribute *attr, char *buf)
 {
-	// I don't think we have a volatile counter, so...
 	return sprintf(buf, "0\n");
 }
 UKSM_ATTR_RO(pages_volatile);
@@ -5412,7 +5414,8 @@ static ssize_t pages_to_scan_show(struct kobject *kobj,
 {
 	unsigned long pages = (uksm_max_cpu_percentage *
 		jiffies_to_msecs(uksm_sleep_jiffies) / 100);
-	pages *= uksm_ema_task_pages;
+	pages = pages * 10 * uksm_ema_task_pages / UKSM_PAGE_COUNT_DEFAULT;
+
 	return sprintf(buf, "%lu\n", pages);
 }
 
@@ -5428,7 +5431,8 @@ static ssize_t pages_to_scan_store(struct kobject *kobj,
 		return -EINVAL;
 
 	pages = pages * 1000 / uksm_ema_task_pages;
-	pages = pages * 100 / jiffies_to_usecs(uksm_sleep_jiffies);
+	pages = pages * UKSM_PAGE_COUNT_DEFAULT * 10 /
+		jiffies_to_usecs(uksm_sleep_jiffies);
 
 	if (pages > 100)
 		return -EINVAL;
