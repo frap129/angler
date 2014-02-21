@@ -316,6 +316,14 @@ config SUSPEND_TIME_TIMEKEEPING
 	  Get the suspend time in suspend from timekeeping for the archs
 	  that don't support persistent clock.
 
+config QUICK_WAKEUP
+	bool "Quick wakeup"
+	depends on SUSPEND
+	default y
+	---help---
+	  Allow kernel driver to do periodic jobs without resuming the full system
+	  This option can increase battery life on android powered smartphone.
+	  
 config DEDUCE_WAKEUP_REASONS
 	bool
 
@@ -335,4 +343,3 @@ config PARTIALRESUME
 	  Partial resume will occur only if all wakeup sources have
 	  partial-resume handlers associated with them, and they all return
 	  true.
-
