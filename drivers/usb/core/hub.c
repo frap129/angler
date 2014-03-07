@@ -1080,7 +1080,7 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
 			if (hdev->bus->is_b_host)
 				goto init2;
 #endif
-			PREPARE_DELAYED_WORK(&hub->init_work, hub_init_func2);
+			INIT_DELAYED_WORK(&hub->init_work, hub_init_func2);
 			queue_delayed_work(system_power_efficient_wq,
 					&hub->init_work,
 					msecs_to_jiffies(delay));
@@ -1243,7 +1243,7 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
 
 		/* Don't do a long sleep inside a workqueue routine */
 		if (type == HUB_INIT2) {
-			PREPARE_DELAYED_WORK(&hub->init_work, hub_init_func3);
+			INIT_DELAYED_WORK(&hub->init_work, hub_init_func3);
 			queue_delayed_work(system_power_efficient_wq,
 					&hub->init_work,
 					msecs_to_jiffies(delay));
