@@ -1723,21 +1723,17 @@ static void __kmemleak_do_cleanup(void)
  */
 static void kmemleak_do_cleanup(struct work_struct *work)
 {
+	struct kmemleak_object *object;
+
 	mutex_lock(&scan_mutex);
 	stop_scan_thread();
 
-	/*
-	 * Once the scan thread has stopped, it is safe to no longer track
-	 * object freeing. Ordering of the scan thread stopping and the memory
-	 * accesses below is guaranteed by the kthread_stop() function.
-	 */
-	kmemleak_free_enabled = 0;
-
-	if (!kmemleak_found_leaks)
-		__kmemleak_do_cleanup();
-	else
-		pr_info("Kmemleak disabled without freeing internal data. "
-			"Reclaim the memory with \"echo clear > /sys/kernel/debug/kmemleak\"\n");
+	if (!kmemleak_found_leaks) {
+		rcu_read_lock();
+		list_for_each_entry_rcu(object, &object_list, object_list)
+			delete_object_full(object->pointer);
+		rcu_read_unlock();
+	}
 	mutex_unlock(&scan_mutex);
 }
 
