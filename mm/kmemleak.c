@@ -1723,17 +1723,14 @@ static void __kmemleak_do_cleanup(void)
  */
 static void kmemleak_do_cleanup(struct work_struct *work)
 {
-	struct kmemleak_object *object;
-
 	mutex_lock(&scan_mutex);
 	stop_scan_thread();
 
-	if (!kmemleak_found_leaks) {
-		rcu_read_lock();
-		list_for_each_entry_rcu(object, &object_list, object_list)
-			delete_object_full(object->pointer);
-		rcu_read_unlock();
-	}
+	if (!kmemleak_found_leaks)
+		__kmemleak_do_cleanup();
+	else
+		pr_info("Kmemleak disabled without freeing internal data. "
+			"Reclaim the memory with \"echo clear > /sys/kernel/debug/kmemleak\"\n");
 	mutex_unlock(&scan_mutex);
 }
 
