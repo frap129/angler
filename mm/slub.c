@@ -2172,6 +2172,9 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
 				      DEFAULT_RATELIMIT_BURST);
 	int node;
 
+	if ((gfpflags & __GFP_NOWARN) || !__ratelimit(&slub_oom_rs))
+		return;
+
 	pr_warn("SLUB: Unable to allocate memory on node %d (gfp=0x%x)\n",
 		nid, gfpflags);
 	pr_warn("  cache: %s, object size: %d, buffer size: %d, default order: %d, min order: %d\n",
