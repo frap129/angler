@@ -1449,7 +1449,7 @@ static inline void inc_nr_running(struct rq *rq)
 			smp_send_reschedule(rq->cpu);
 		}
 #endif
-       }
+	}
 }
 
 static inline void dec_nr_running(struct rq *rq)
