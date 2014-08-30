@@ -144,7 +144,6 @@ static int __init tcp_congestion_default(void)
 }
 late_initcall(tcp_congestion_default);
 
-
 /* Build string with list of available congestion control values */
 void tcp_get_available_congestion_control(char *buf, size_t maxlen)
 {
@@ -156,7 +155,6 @@ void tcp_get_available_congestion_control(char *buf, size_t maxlen)
 		offs += snprintf(buf + offs, maxlen - offs,
 				 "%s%s",
 				 offs == 0 ? "" : " ", ca->name);
-
 	}
 	rcu_read_unlock();
 }
@@ -188,7 +186,6 @@ void tcp_get_allowed_congestion_control(char *buf, size_t maxlen)
 		offs += snprintf(buf + offs, maxlen - offs,
 				 "%s%s",
 				 offs == 0 ? "" : " ", ca->name);
-
 	}
 	rcu_read_unlock();
 }
@@ -231,7 +228,6 @@ out:
 
 	return ret;
 }
-
 
 /* Change congestion control for socket */
 int tcp_set_congestion_control(struct sock *sk, const char *name)
@@ -371,6 +367,7 @@ EXPORT_SYMBOL_GPL(tcp_reno_cong_avoid);
 u32 tcp_reno_ssthresh(struct sock *sk)
 {
 	const struct tcp_sock *tp = tcp_sk(sk);
+
 	return max(tp->snd_cwnd >> 1U, 2U);
 }
 EXPORT_SYMBOL_GPL(tcp_reno_ssthresh);
