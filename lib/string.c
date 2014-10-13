@@ -28,14 +28,14 @@
 #include <linux/errno.h>
 #include <linux/memcopy.h>
 
-#ifndef __HAVE_ARCH_STRNICMP
+#ifndef __HAVE_ARCH_STRNCASECMP
 /**
- * strnicmp - Case insensitive, length-limited string comparison
+ * strncasecmp - Case insensitive, length-limited string comparison
  * @s1: One string
  * @s2: The other string
  * @len: the maximum number of characters to compare
  */
-int strnicmp(const char *s1, const char *s2, size_t len)
+int strncasecmp(const char *s1, const char *s2, size_t len)
 {
 	/* Yes, Virginia, it had better be unsigned */
 	unsigned char c1, c2;
@@ -57,7 +57,7 @@ int strnicmp(const char *s1, const char *s2, size_t len)
 	} while (--len);
 	return (int)c1 - (int)c2;
 }
-EXPORT_SYMBOL(strnicmp);
+EXPORT_SYMBOL(strncasecmp);
 #endif
 
 #ifndef __HAVE_ARCH_STRCASECMP
@@ -72,20 +72,6 @@ int strcasecmp(const char *s1, const char *s2)
 	return c1 - c2;
 }
 EXPORT_SYMBOL(strcasecmp);
-#endif
-
-#ifndef __HAVE_ARCH_STRNCASECMP
-int strncasecmp(const char *s1, const char *s2, size_t n)
-{
-	int c1, c2;
-
-	do {
-		c1 = tolower(*s1++);
-		c2 = tolower(*s2++);
-	} while ((--n > 0) && c1 == c2 && c1 != 0);
-	return c1 - c2;
-}
-EXPORT_SYMBOL(strncasecmp);
 #endif
 
 #ifndef __HAVE_ARCH_STRCPY
@@ -108,7 +94,7 @@ EXPORT_SYMBOL(strcpy);
 
 #ifndef __HAVE_ARCH_STRNCPY
 /**
- * strncpy - Copy a length-limited, %NUL-terminated string
+ * strncpy - Copy a length-limited, C-string
  * @dest: Where to copy the string to
  * @src: Where to copy the string from
  * @count: The maximum number of bytes to copy
@@ -137,7 +123,7 @@ EXPORT_SYMBOL(strncpy);
 
 #ifndef __HAVE_ARCH_STRLCPY
 /**
- * strlcpy - Copy a %NUL terminated string into a sized buffer
+ * strlcpy - Copy a C-string into a sized buffer
  * @dest: Where to copy the string to
  * @src: Where to copy the string from
  * @size: size of destination buffer
@@ -183,7 +169,7 @@ EXPORT_SYMBOL(strcat);
 
 #ifndef __HAVE_ARCH_STRNCAT
 /**
- * strncat - Append a length-limited, %NUL-terminated string to another
+ * strncat - Append a length-limited, C-string to another
  * @dest: The string to be appended to
  * @src: The string to append to it
  * @count: The maximum numbers of bytes to copy
@@ -212,7 +198,7 @@ EXPORT_SYMBOL(strncat);
 
 #ifndef __HAVE_ARCH_STRLCAT
 /**
- * strlcat - Append a length-limited, %NUL-terminated string to another
+ * strlcat - Append a length-limited, C-string to another
  * @dest: The string to be appended to
  * @src: The string to append to it
  * @count: The size of the destination buffer.
@@ -637,6 +623,11 @@ EXPORT_SYMBOL(memset);
  * @s: Pointer to the start of the area.
  * @count: The size of the area.
  *
+ * Note: usually using memset() is just fine (!), but in cases
+ * where clearing out _local_ data at the end of a scope is
+ * necessary, memzero_explicit() should be used instead in
+ * order to prevent the compiler from optimising away zeroing.
+ *
  * memzero_explicit() doesn't need an arch-specific version as
  * it just invokes the one of memset() implicitly.
  */
@@ -845,7 +836,7 @@ void *memchr_inv(const void *start, int c, size_t bytes)
 
 	value64 = value;
 #if defined(ARCH_HAS_FAST_MULTIPLIER) && BITS_PER_LONG == 64
-	value64 *= 0x0101010101010101;
+	value64 *= 0x0101010101010101ULL;
 #elif defined(ARCH_HAS_FAST_MULTIPLIER)
 	value64 *= 0x01010101;
 	value64 |= value64 << 32;
