@@ -36,6 +36,8 @@ bool is_display_on()
 	return display_on;
 }
 
+bool mdss_screen_on = true;
+
 void mdss_dsi_panel_pwm_cfg(struct mdss_dsi_ctrl_pdata *ctrl)
 {
 	if (ctrl->pwm_pmi)
@@ -656,6 +658,7 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 
 	display_on = true;
 
+	mdss_screen_on = true;
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -710,6 +713,7 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 		mdss_dsi_panel_cmds_send(ctrl, &ctrl->off_cmds);
 
 	display_on = false;
+	mdss_screen_on = false;
 
 end:
 	pinfo->blank_state = MDSS_PANEL_BLANK_BLANK;
