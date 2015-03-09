@@ -14,6 +14,7 @@ CFLAGS_audit.o := -fno-unsafe-math-optimizations -fno-strict-aliasing
 CFLAGS_auditfilter.o := -fno-unsafe-math-optimizations -fno-strict-aliasing
 CFLAGS_cgroup.o := -fno-unsafe-math-optimizations -fno-strict-aliasing
 CFLAGS_audit.o := -Wno-tautological-compare
+CFLAGS_workqueue.o := -Wno-error=implicit-function-declaration -Wno-implicit-function-declaration
 
 obj-y     = fork.o exec_domain.o panic.o printk.o \
 	    cpu.o exit.o itimer.o time.o softirq.o resource.o \
