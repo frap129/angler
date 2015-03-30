@@ -162,6 +162,12 @@ static inline void tick_broadcast_exit(void)
 	tick_broadcast_oneshot_control(TICK_BROADCAST_EXIT);
 }
 
+#if defined(CONFIG_GENERIC_CLOCKEVENTS_BROADCAST) && defined(CONFIG_TICK_ONESHOT)
+extern void hotplug_cpu__broadcast_tick_pull(int dead_cpu);
+#else
+static inline void hotplug_cpu__broadcast_tick_pull(int dead_cpu) { }
+#endif
+
 extern void tick_nohz_idle_enter(void);
 extern void tick_nohz_idle_exit(void);
 extern void tick_nohz_irq_exit(void);
