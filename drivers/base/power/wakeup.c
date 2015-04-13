@@ -456,37 +456,18 @@ static void wakeup_source_deactivate(struct wakeup_source *ws)
                 wake_up(&wakeup_count_wait_queue);
 }
 
-static bool wakeup_source_blocker(struct wakeup_source *ws)
+/**
+ * wakeup_source_not_registered - validate the given wakeup source.
+ * @ws: Wakeup source to be validated.
+ */
+static bool wakeup_source_not_registered(struct wakeup_source *ws)
 {
-	unsigned int wslen = 0;
-
-	if (ws) {
-		wslen = strlen(ws->name);
-
-		if ((!enable_ipa_ws && !strncmp(ws->name, "IPA_WS", wslen)) ||
-			(!enable_wlan_rx_wake_ws &&
-				!strncmp(ws->name, "wlan_rx_wake", wslen)) ||
-			(!enable_wlan_ctrl_wake_ws &&
-				!strncmp(ws->name, "wlan_ctrl_wake", wslen)) ||
-			(!enable_wlan_wake_ws &&
-				!strncmp(ws->name, "wlan_wake", wslen)) ||
-			(!enable_bluedroid_timer_ws &&
-				!strncmp(ws->name, "bluedroid_timer", wslen)) ||
-			(!enable_timerfd_ws &&
-				!strncmp(ws->name, "[timerfd]", wslen)) ||
-			(!enable_netlink_ws &&
-				!strncmp(ws->name, "NETLINK", wslen))) {
-			if (ws->active) {
-				wakeup_source_deactivate(ws);
-				pr_info("forcefully deactivate wakeup source: %s\n",
-					ws->name);
-			}
-
-			return true;
-		}
-	}
-
-	return false;
+	/*
+	 * Use timer struct to check if the given source is initialized
+	 * by wakeup_source_add.
+	 */
+	return ws->timer.function != pm_wakeup_timer_fn ||
+		   ws->timer.data != (unsigned long)ws;
 }
 
 /*
@@ -528,6 +509,35 @@ static bool wakeup_source_blocker(struct wakeup_source *ws)
 static void wakeup_source_activate(struct wakeup_source *ws)
 {
 	unsigned int cec;
+
+	if (((!enable_wlan_rx_wake_ws &&
+			!strncmp(ws->name, "wlan_rx_wake", 12)) ||
+		(!enable_msm_hsic_ws &&
+			!strncmp(ws->name, "msm_hsic_host", 13)) ||
+		(!enable_wlan_ctrl_wake_ws &&
+			!strncmp(ws->name, "wlan_ctrl_wake", 14)) ||
+		(!enable_wlan_wake_ws &&
+			!strncmp(ws->name, "wlan_wake", 9)) ||
+		(!enable_bluedroid_timer_ws &&
+			!strncmp(ws->name, "bluedroid_timer", 15)) ||
+		(!enable_ipa_ws &&
+			!strncmp(ws->name, "IPA_WS", 6)) ||
+		(!enable_qcom_rx_wakelock_ws &&
+			!strncmp(ws->name, "qcom_rx_wakelock", 16)))) {
+		/*
+		 * let's try and deactivate this wakeup source since the user
+		 * clearly doesn't want it. The user is responsible for any
+		 * adverse effects and has been warned about it
+		 */
+		if (ws->active)
+			wakeup_source_deactivate(ws);
+
+		return;
+	}
+
+	if (WARN(wakeup_source_not_registered(ws),
+			"unregistered wakeup source\n"))
+		return;
 
 	/*
 	 * active wakeup source should bring the system
