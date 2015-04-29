@@ -147,7 +147,7 @@ static cpumask_t cpuidle_coupled_poked;
  * has returned from this function, the barrier is immediately available for
  * reuse.
  *
- * The atomic variable a must be initialized to 0 before any cpu calls
+ * The atomic variable must be initialized to 0 before any cpu calls
  * this function, will be reset to 0 before any cpu returns from this function.
  *
  * Must only be called from within a coupled idle state handler
@@ -474,6 +474,7 @@ int cpuidle_enter_state_coupled(struct cpuidle_device *dev,
 		}
 		entered_state = cpuidle_enter_state(dev, drv,
 			dev->safe_state_index);
+		local_irq_disable();
 	}
 
 	/* Read barrier ensures online_count is read after prevent is cleared */
@@ -521,6 +522,7 @@ retry:
 
 		entered_state = cpuidle_enter_state(dev, drv,
 			dev->safe_state_index);
+		local_irq_disable();
 	}
 
 	cpuidle_coupled_clear_pokes(dev->cpu);
