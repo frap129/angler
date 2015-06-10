@@ -921,6 +921,11 @@ static inline unsigned int tcp_packets_in_flight(const struct tcp_sock *tp)
 
 #define TCP_INFINITE_SSTHRESH	0x7fffffff
 
+static inline bool tcp_in_slow_start(const struct tcp_sock *tp)
+{
+	return tp->snd_cwnd < tp->snd_ssthresh;
+}
+
 static inline bool tcp_in_initial_slowstart(const struct tcp_sock *tp)
 {
 	return tp->snd_ssthresh >= TCP_INFINITE_SSTHRESH;
@@ -951,7 +956,7 @@ static inline __u32 tcp_current_ssthresh(const struct sock *sk)
 /* Use define here intentionally to get WARN_ON location shown at the caller */
 #define tcp_verify_left_out(tp)	WARN_ON(tcp_left_out(tp) > tp->packets_out)
 
-extern void tcp_enter_cwr(struct sock *sk, const int set_ssthresh);
+extern void tcp_enter_cwr(struct sock *sk);
 extern __u32 tcp_init_cwnd(const struct tcp_sock *tp, const struct dst_entry *dst);
 
 /* The maximum number of MSS of available cwnd for which TSO defers

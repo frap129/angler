@@ -317,8 +317,8 @@ void tcp_slow_start(struct tcp_sock *tp)
 		snd_cwnd = 1U;
 	}
 
-	if (sysctl_tcp_max_ssthresh > 0 && tp->snd_cwnd > sysctl_tcp_max_ssthresh)
-		cnt = sysctl_tcp_max_ssthresh >> 1;	/* limited slow start */
+	if (sysctl_tcp_max_ssthresh > 0)
+		cnt = min(snd_cwnd, (u32)sysctl_tcp_max_ssthresh); /* limited slow start */
 	else
 		cnt = snd_cwnd;				/* exponential increase */
 
@@ -359,7 +359,7 @@ void tcp_reno_cong_avoid(struct sock *sk, u32 ack, u32 in_flight)
 		return;
 
 	/* In "safe" area, increase. */
-	if (tp->snd_cwnd <= tp->snd_ssthresh)
+	if (tcp_in_slow_start(tp))
 		tcp_slow_start(tp);
 	/* In dangerous area, increase slowly. */
 	else
