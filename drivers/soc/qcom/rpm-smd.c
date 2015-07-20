@@ -1440,7 +1440,6 @@ static int msm_rpm_dev_probe(struct platform_device *pdev)
 	spin_lock_init(&msm_rpm_data.smd_lock_read);
 	tasklet_init(&data_tasklet, data_fn_tasklet, 0);
 
-
 	wait_for_completion(&msm_rpm_data.smd_open);
 
 	smd_disable_read_intr(msm_rpm_data.ch_info);
