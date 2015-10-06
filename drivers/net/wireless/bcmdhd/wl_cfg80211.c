@@ -121,9 +121,6 @@ u32 wl_dbg_level = WL_DBG_ERR;
 #define WL_IS_P2P_DEV_EVENT(e) ((e->emsg.ifidx == 0) && \
 		(e->emsg.bsscfgidx == P2PAPI_BSSCFG_DEVICE))
 
-#define DNGL_FUNC(func, parameters) func parameters
-#define COEX_DHCP
-
 #define WLAN_EID_SSID	0
 #define CH_MIN_5G_CHANNEL 34
 #define CH_MIN_2G_CHANNEL 1
@@ -1540,7 +1537,7 @@ wl_cfg80211_add_virtual_iface(struct wiphy *wiphy,
 				dhd_mode = DHD_FLAG_P2P_GC_MODE;
 			else if (type == NL80211_IFTYPE_P2P_GO)
 				dhd_mode = DHD_FLAG_P2P_GO_MODE;
-			DNGL_FUNC(dhd_cfg80211_set_p2p_info, (cfg, dhd_mode));
+			dhd_cfg80211_set_p2p_info(cfg, dhd_mode);
 			/* reinitialize completion to clear previous count */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(3, 13, 0))
 			INIT_COMPLETION(cfg->iface_disable);
@@ -1635,7 +1632,7 @@ wl_cfg80211_del_virtual_iface(struct wiphy *wiphy, bcm_struct_cfgdev *cfgdev)
 
 			memset(&cfg->if_event_info, 0, sizeof(cfg->if_event_info));
 			wl_set_p2p_status(cfg, IF_DELETING);
-			DNGL_FUNC(dhd_cfg80211_clean_p2p_info, (cfg));
+			dhd_cfg80211_clean_p2p_info(cfg);
 
 			/* for GO */
 			if (wl_get_mode_by_netdev(cfg, dev) == WL_MODE_AP) {
@@ -2886,7 +2883,7 @@ bcm_cfg80211_add_ibss_if(struct wiphy *wiphy, char *name)
 	/* generate a new MAC address for the IBSS interface */
 	get_primary_mac(cfg, &cfg->ibss_if_addr);
 	cfg->ibss_if_addr.octet[4] ^= 0x40;
-	memset(&aibss_if, sizeof(aibss_if), 0);
+	memset(&aibss_if, 0, sizeof(aibss_if));
 	memcpy(&aibss_if.addr, &cfg->ibss_if_addr, sizeof(aibss_if.addr));
 	aibss_if.chspec = 0;
 	aibss_if.len = sizeof(aibss_if);
@@ -10999,14 +10996,14 @@ static s32 wl_init_priv(struct bcm_cfg80211 *cfg)
 	wl_init_conf(cfg->conf);
 	wl_init_prof(cfg, ndev);
 	wl_link_down(cfg);
-	DNGL_FUNC(dhd_cfg80211_init, (cfg));
+	dhd_cfg80211_init(cfg);
 
 	return err;
 }
 
 static void wl_deinit_priv(struct bcm_cfg80211 *cfg)
 {
-	DNGL_FUNC(dhd_cfg80211_deinit, (cfg));
+	dhd_cfg80211_deinit(cfg);
 	wl_destroy_event_handler(cfg);
 	wl_flush_eq(cfg);
 	wl_link_down(cfg);
@@ -11019,7 +11016,7 @@ static void wl_deinit_priv(struct bcm_cfg80211 *cfg)
 }
 
 #if defined(WL_ENABLE_P2P_IF)
-static s32 wl_cfg80211_attach_p2p(struct bcm_cfg80211 *cfg)
+static int wl_cfg80211_attach_p2p(struct bcm_cfg80211 *cfg)
 {
 	WL_TRACE(("Enter \n"));
 
@@ -11031,30 +11028,11 @@ static s32 wl_cfg80211_attach_p2p(struct bcm_cfg80211 *cfg)
 	return 0;
 }
 
-static s32  wl_cfg80211_detach_p2p(struct bcm_cfg80211 *cfg)
+static void wl_cfg80211_detach_p2p(struct bcm_cfg80211 *cfg)
 {
-	struct wireless_dev *wdev;
-
-	WL_DBG(("Enter \n"));
-	if (!cfg) {
-		WL_ERR(("Invalid Ptr\n"));
-		return -EINVAL;
-	} else
-		wdev = cfg->p2p_wdev;
-
-	if (!wdev) {
-		WL_ERR(("Invalid Ptr\n"));
-		return -EINVAL;
-	}
+	WL_TRACE(("Enter \n"));
 
 	wl_cfgp2p_unregister_ndev(cfg);
-
-	cfg->p2p_wdev = NULL;
-	cfg->p2p_net = NULL;
-	WL_DBG(("Freeing 0x%08x \n", (unsigned int)wdev));
-	kfree(wdev);
-
-	return 0;
 }
 #endif
 
@@ -11196,11 +11174,10 @@ s32 wl_cfg80211_attach(struct net_device *ndev, void *context)
 			goto cfg80211_attach_out;
 		}
 	}
-#if defined(COEX_DHCP)
+
 	cfg->btcoex_info = wl_cfg80211_btcoex_init(cfg->wdev->netdev);
 	if (!cfg->btcoex_info)
 		goto cfg80211_attach_out;
-#endif
 
 #if defined(WL_ENABLE_P2P_IF)
 	err = wl_cfg80211_attach_p2p(cfg);
@@ -11225,10 +11202,8 @@ void wl_cfg80211_detach(struct bcm_cfg80211 *cfg)
 
 	wl_add_remove_pm_enable_work(cfg, FALSE, WL_HANDLER_DEL);
 
-#if defined(COEX_DHCP)
-	wl_cfg80211_btcoex_deinit();
+	wl_cfg80211_btcoex_deinit(cfg->btcoex_info);
 	cfg->btcoex_info = NULL;
-#endif
 
 	wl_setup_rfkill(cfg, FALSE);
 #ifdef DEBUGFS_CFG80211
@@ -12006,7 +11981,7 @@ static s32 __wl_cfg80211_down(struct bcm_cfg80211 *cfg)
 		wl_cfg80211_del_iface(cfg->wdev->wiphy, cfg->bss_cfgdev);
 #endif /* defined (DUAL_STA) || defined (DUAL_STA_STATIC_IF) */
 
-	DNGL_FUNC(dhd_cfg80211_down, (cfg));
+	dhd_cfg80211_down(cfg);
 
 	return err;
 }
