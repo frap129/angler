@@ -1796,9 +1796,9 @@ static void qpnp_hap_td_enable(struct timed_output_dev *dev, int value)
 	queue_work(hap->wq, &hap->td_work);
 }
 
-void vibrate(int strength)
+void set_vibrate(int value)
 {
-        qpnp_hap_td_enable(&ghap->timed_dev, strength);
+	qpnp_hap_td_enable(&ghap->timed_dev, value);
 }
 
 /* play pwm bytes */
