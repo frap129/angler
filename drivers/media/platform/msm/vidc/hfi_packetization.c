@@ -127,7 +127,7 @@ static inline u32 get_hfi_layout(enum hal_buffer_layout_type hal_buf_layout)
 	return hfi_layout;
 }
 
-static inline u32 get_hfi_codec(enum hal_video_codec hal_codec)
+inline u32 get_hfi_codec(enum hal_video_codec hal_codec)
 {
 	u32 hfi_codec;
 	switch (hal_codec) {
@@ -324,7 +324,7 @@ int create_pkt_cmd_sys_ping(struct hfi_cmd_sys_ping_packet *pkt)
 	return rc;
 }
 
-inline int create_pkt_cmd_sys_session_init(
+static inline int create_pkt_cmd_sys_session_init(
 		struct hfi_cmd_sys_session_init_packet *pkt,
 		struct hal_session *session,
 		u32 session_domain, u32 session_codec)
