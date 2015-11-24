@@ -1,6 +1,7 @@
 #
 # Makefile for the linux memory manager.
 #
+CFLAGS_KERNEL := -Wno-implicit-function-declaration -Wno-discarded-qualifiers -Wno-int-conversion
 
 mmu-y			:= nommu.o
 mmu-$(CONFIG_MMU)	:= fremap.o highmem.o madvise.o memory.o mincore.o \

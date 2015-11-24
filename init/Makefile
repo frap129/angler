@@ -1,6 +1,8 @@
 #
 # Makefile for the linux kernel.
 #
+CFLAGS_do_mounts.o := -fno-unsafe-math-optimizations -fno-strict-aliasing
+CFLAGS_init_task.o := -fno-unsafe-math-optimizations -fno-strict-aliasing
 
 obj-y                          := main.o version.o mounts.o
 ifneq ($(CONFIG_BLK_DEV_INITRD),y)

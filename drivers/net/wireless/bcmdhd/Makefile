@@ -2,6 +2,7 @@
 #####################
 # SDIO Basic feature
 #####################
+CFLAGS_KERNEL := -fno-unsafe-math-optimizations -fno-strict-aliasing -Wno-memset-transposed-args
 
 DHDCFLAGS += -Wall -Wstrict-prototypes -Dlinux -DLINUX -DBCMDRIVER            \
 	-DBCMDONGLEHOST -DUNRELEASEDCHIP -DBCMDMA32 -DBCMFILEIMAGE            \
