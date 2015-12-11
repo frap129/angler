@@ -120,6 +120,7 @@ enum dsi_lane_map_type {
 enum dsi_pm_type {
 	DSI_CORE_PM,
 	DSI_CTRL_PM,
+	DSI_PHY_PM,
 	DSI_PANEL_PM,
 	DSI_MAX_PM
 };
@@ -378,6 +379,7 @@ struct mdss_dsi_ctrl_pdata {
 	struct dsi_panel_cmds lp_on_cmds;
 	struct dsi_panel_cmds lp_off_cmds;
 	struct dsi_panel_cmds status_cmds;
+	struct dsi_panel_cmds gamma_cmds;
 	u32 status_cmds_rlen;
 	u32 *status_value;
 	u32 status_error_count;
@@ -430,6 +432,7 @@ struct mdss_dsi_ctrl_pdata {
 
 	struct dsi_panel_cmds hbm_on_cmds;
 	struct dsi_panel_cmds hbm_off_cmds;
+	struct platform_device *pdev;
 };
 
 struct dsi_status_data {
@@ -517,12 +520,15 @@ int mdss_panel_get_dst_fmt(u32 bpp, char mipi_mode, u32 pixel_packing,
 
 int mdss_dsi_register_recovery_handler(struct mdss_dsi_ctrl_pdata *ctrl,
 		struct mdss_intf_recovery *recovery);
+int mdss_dsi_panel_color_temp(struct device_node *pan_node,
+		struct mdss_dsi_ctrl_pdata *ctrl, int color_temp);
 
 static inline const char *__mdss_dsi_pm_name(enum dsi_pm_type module)
 {
 	switch (module) {
 	case DSI_CORE_PM:	return "DSI_CORE_PM";
 	case DSI_CTRL_PM:	return "DSI_CTRL_PM";
+	case DSI_PHY_PM:	return "DSI_PHY_PM";
 	case DSI_PANEL_PM:	return "PANEL_PM";
 	default:		return "???";
 	}
@@ -534,6 +540,7 @@ static inline const char *__mdss_dsi_pm_supply_node_name(
 	switch (module) {
 	case DSI_CORE_PM:	return "qcom,core-supply-entries";
 	case DSI_CTRL_PM:	return "qcom,ctrl-supply-entries";
+	case DSI_PHY_PM:	return "qcom,phy-supply-entries";
 	case DSI_PANEL_PM:	return "qcom,panel-supply-entries";
 	default:		return "???";
 	}
