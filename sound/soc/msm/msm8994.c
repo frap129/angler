@@ -1967,7 +1967,7 @@ static int msm8994_tert_mi2s_snd_startup(struct snd_pcm_substream *substream)
 	struct msm8994_asoc_mach_data *pdata = snd_soc_card_get_drvdata(card);
 	struct msm_pinctrl_info *pinctrl_info = &pdata->pinctrl_info;
 
-	pr_info("%s: dai name %s %p  substream = %s  stream = %d bit width =%d sample rate =%d  \n", __func__, cpu_dai->name, cpu_dai->dev,substream->name,
+	pr_debug("%s: dai name %s %p  substream = %s  stream = %d bit width =%d sample rate =%d  \n", __func__, cpu_dai->name, cpu_dai->dev,substream->name,
 			substream->stream, tert_mi2s_bit_format, tert_mi2s_sample_rate);
 
 	if (atomic_inc_return(&tert_mi2s_rsc_ref) == 1) {
@@ -2573,7 +2573,7 @@ static int msm_audrx_init(struct snd_soc_pcm_runtime *rtd)
 					     134, 135, 136, 137, 138, 139,
 					     140, 141, 142, 143};
 
-	pr_info("%s: dev_name%s\n", __func__, dev_name(cpu_dai->dev));
+	pr_debug("%s: dev_name%s\n", __func__, dev_name(cpu_dai->dev));
 
 	rtd->pmdown_time = 0;
 
