@@ -30,8 +30,9 @@
 #include <linux/tick.h>
 #include <trace/events/power.h>
 
-static unsigned int min_freq_hardlimit[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-static unsigned int max_freq_hardlimit[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+// the hard limits are not per core but per cpu cluster
+static unsigned int min_freq_hardlimit[8] = {0, 0};
+static unsigned int max_freq_hardlimit[8] = {0, 0};
 
 #define CONFIG_MSM_CPU_FREQ_MIN_GROUP1 302400
 #define CONFIG_MSM_CPU_FREQ_MAX_GROUP1 1555200
@@ -61,6 +62,15 @@ struct cpufreq_cpu_save_data {
 };
 static DEFINE_PER_CPU(struct cpufreq_cpu_save_data, cpufreq_policy_save);
 #endif
+
+static inline int map_core_to_cluster(int core)
+{
+	// cores 0..3 are the little cluster, cores 4..7 are the big cluster
+	if (core <=3)
+		return 0;
+
+	return 1;
+}
 
 static inline bool has_target(void)
 {
@@ -480,7 +490,7 @@ static ssize_t store_##file_name					\
  */
 static ssize_t show_scaling_min_freq_hardlimit(struct cpufreq_policy *policy, char *buf)
 {							\
-	return sprintf(buf, "%u\n", min_freq_hardlimit[policy->cpu]);
+	return sprintf(buf, "%u\n", min_freq_hardlimit[map_core_to_cluster(policy->cpu)]);
 }
 
 
@@ -501,7 +511,7 @@ static ssize_t store_scaling_min_freq_hardlimit(struct cpufreq_policy *policy, c
 	// zero is an allowed value to disable the hard limit check
 	if (input == 0)
 	{
-		max_freq_hardlimit[policy->cpu] = 0;
+		max_freq_hardlimit[map_core_to_cluster(policy->cpu)] = 0;
 		pr_debug("cpufreq : max frequency hard limit check disabled\n");
 		return count;
 	}
@@ -520,7 +530,7 @@ static ssize_t store_scaling_min_freq_hardlimit(struct cpufreq_policy *policy, c
 		if (table[i].frequency == input) 
 		{
 			pr_debug("cpufreq : frequency for minimum scaling freq hard limit found\n");
-			min_freq_hardlimit[policy->cpu] = input;
+			min_freq_hardlimit[map_core_to_cluster(policy->cpu)] = input;
 			return count;
 		}
 
@@ -534,7 +544,7 @@ static ssize_t store_scaling_min_freq_hardlimit(struct cpufreq_policy *policy, c
  */
 static ssize_t show_scaling_max_freq_hardlimit(struct cpufreq_policy *policy, char *buf)
 {							\
-	return sprintf(buf, "%u\n", max_freq_hardlimit[policy->cpu]);
+	return sprintf(buf, "%u\n", max_freq_hardlimit[map_core_to_cluster(policy->cpu)]);
 }
 
 
@@ -555,7 +565,7 @@ static ssize_t store_scaling_max_freq_hardlimit(struct cpufreq_policy *policy, c
 	// zero is an allowed value to disable the hard limit check
 	if (input == 0)
 	{
-		min_freq_hardlimit[policy->cpu] = 0;
+		min_freq_hardlimit[map_core_to_cluster(policy->cpu)] = 0;
 		pr_debug("cpufreq : min frequency hard limit check disabled\n");
 		return count;
 	}
@@ -574,7 +584,7 @@ static ssize_t store_scaling_max_freq_hardlimit(struct cpufreq_policy *policy, c
 		if (table[i].frequency == input) 
 		{
 			pr_debug("cpufreq : frequency for maximum scaling freq hard limit found\n");
-			max_freq_hardlimit[policy->cpu] = input;
+			max_freq_hardlimit[map_core_to_cluster(policy->cpu)] = input;
 			return count;
 		}
 
@@ -601,9 +611,9 @@ static ssize_t store_scaling_min_freq(struct cpufreq_policy *policy, const char 
 
 	// if hard limit check is enabled + if new min frequency is below hard limit,
 	// overwrite with hard limit
-	if (min_freq_hardlimit[policy->cpu] != 0)
-		if (new_policy.min < min_freq_hardlimit[policy->cpu])
-			new_policy.min = min_freq_hardlimit[policy->cpu];
+	if (min_freq_hardlimit[map_core_to_cluster(policy->cpu)] != 0)
+		if (new_policy.min < min_freq_hardlimit[map_core_to_cluster(policy->cpu)])
+			new_policy.min = min_freq_hardlimit[map_core_to_cluster(policy->cpu)];
 
 	ret = cpufreq_driver->verify(&new_policy);
 	if (ret)
@@ -634,9 +644,9 @@ static ssize_t store_scaling_max_freq(struct cpufreq_policy *policy, const char 
 
 	// if hard limit check is enabled + if new max frequency is above hard limit,
 	// overwrite with hard limit
-	if (max_freq_hardlimit[policy->cpu] != 0)
-		if (new_policy.max > max_freq_hardlimit[policy->cpu])
-			new_policy.max = max_freq_hardlimit[policy->cpu];
+	if (max_freq_hardlimit[map_core_to_cluster(policy->cpu)] != 0)
+		if (new_policy.max > max_freq_hardlimit[map_core_to_cluster(policy->cpu)])
+			new_policy.max = max_freq_hardlimit[map_core_to_cluster(policy->cpu)];
 
 	ret = cpufreq_driver->verify(&new_policy);
 	if (ret)
@@ -2226,15 +2236,15 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 
 	// if hard limit check is enabled + if new max frequency is above hard limit,
 	// overwrite with hard limit
-	if (min_freq_hardlimit[policy->cpu] != 0)
-		if (policy->min < min_freq_hardlimit[policy->cpu])
-			policy->min = min_freq_hardlimit[policy->cpu];
+	if (min_freq_hardlimit[map_core_to_cluster(policy->cpu)] != 0)
+		if (policy->min < min_freq_hardlimit[map_core_to_cluster(policy->cpu)])
+			policy->min = min_freq_hardlimit[map_core_to_cluster(policy->cpu)];
 
 	// if hard limit check is enabled + if new max frequency is above hard limit,
 	// overwrite with hard limit
-	if (max_freq_hardlimit[policy->cpu] != 0)
-		if (policy->max > max_freq_hardlimit[policy->cpu])
-			policy->max = max_freq_hardlimit[policy->cpu];
+	if (max_freq_hardlimit[map_core_to_cluster(policy->cpu)] != 0)
+		if (policy->max > max_freq_hardlimit[map_core_to_cluster(policy->cpu)])
+			policy->max = max_freq_hardlimit[map_core_to_cluster(policy->cpu)];
 
 	if (new_policy->min > policy->user_policy.max
 	    || new_policy->max < policy->user_policy.min) {
@@ -2441,7 +2451,6 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
 {
 	unsigned long flags;
 	int ret;
-	int i;
 
 	if (cpufreq_disabled())
 		return -ENODEV;
@@ -2496,21 +2505,10 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
 	pr_debug("driver %s up and running\n", driver_data->name);
 
 	// Initialize min and max scaling freq hard limits
-	for (i = 0; i < nr_cpu_ids; i++)
-	{
-		if (i < 4)
-		{
-			min_freq_hardlimit[i] = CONFIG_MSM_CPU_FREQ_MIN_GROUP1;
-			max_freq_hardlimit[i] = CONFIG_MSM_CPU_FREQ_MAX_GROUP1;
-		}
-		else
-		{
-			min_freq_hardlimit[i] = CONFIG_MSM_CPU_FREQ_MIN_GROUP2;
-			max_freq_hardlimit[i] = CONFIG_MSM_CPU_FREQ_MAX_GROUP2;
-		}
-
-		pr_info("cpufreq : cpu %d - minimum/maximum scaling freq hard limit set to: %u %u\n", i, min_freq_hardlimit[i], max_freq_hardlimit[i]);
-	}
+	min_freq_hardlimit[0] = CONFIG_MSM_CPU_FREQ_MIN_GROUP1;
+	max_freq_hardlimit[0] = CONFIG_MSM_CPU_FREQ_MAX_GROUP1;
+	min_freq_hardlimit[1] = CONFIG_MSM_CPU_FREQ_MIN_GROUP2;
+	max_freq_hardlimit[1] = CONFIG_MSM_CPU_FREQ_MAX_GROUP2;
 
 	return 0;
 err_if_unreg:
