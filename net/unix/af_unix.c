@@ -1937,6 +1937,7 @@ static int unix_dgram_recvmsg(struct kiocb *iocb, struct socket *sock,
 	struct sock *sk = sock->sk;
 	struct unix_sock *u = unix_sk(sk);
 	struct sk_buff *skb;
+	int noblock = flags & MSG_DONTWAIT;
 	int err;
 	int peeked, skip;
 
