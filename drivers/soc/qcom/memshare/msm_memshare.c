@@ -215,6 +215,7 @@ static int modem_notifier_cb(struct notifier_block *this, unsigned long code,
 {
 	pr_debug("memshare: Modem notification\n");
 
+	mutex_lock(&memsh_drv->mem_share);
 	switch (code) {
 
 	case SUBSYS_AFTER_POWERUP:
@@ -227,6 +228,7 @@ static int modem_notifier_cb(struct notifier_block *this, unsigned long code,
 		break;
 	}
 
+	mutex_unlock(&memsh_drv->mem_share);
 	return NOTIFY_DONE;
 }
 
