@@ -37,7 +37,12 @@
 #define WCD9330_DMIC_CLK_DIV_6 0x03
 #define WCD9330_DMIC_CLK_DIV_16 0x04
 
+#ifndef VENDOR_EDIT
+/*zhiguang.su@MultiMedia.AudioDrv, 2016-01-23, remove unused function*/
 #define TOMTOM_ZDET_SUPPORTED true
+#else
+#define TOMTOM_ZDET_SUPPORTED false
+#endif
 
 extern const u8 tomtom_reg_readable[TOMTOM_CACHE_SIZE];
 extern const u8 tomtom_reset_reg_defaults[TOMTOM_CACHE_SIZE];

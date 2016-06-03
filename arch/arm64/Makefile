@@ -91,9 +91,10 @@ zinstall install: vmlinux
 .PHONY: dtbs
 dtbs: scripts
 	$(Q)$(MAKE) $(build)=$(boot)/dts dtbs
-	$(Q)$(MAKE) $(build)=$(boot)/dts/qcom dtbs
-	$(Q)$(MAKE) $(build)=$(boot)/dts/huawei dtbs
-	@true
+	$(Q)$(MAKE) $(build)=$(boot)/dts/14049_HW_11 dtbs
+	$(Q)$(MAKE) $(build)=$(boot)/dts/14049_HW_12 dtbs
+	$(Q)$(MAKE) $(build)=$(boot)/dts/14049_HW_13 dtbs
+	$(Q)$(MAKE) $(build)=$(boot)/dts/14049_HW_14 dtbs
 
 PHONY += vdso_install
 vdso_install:

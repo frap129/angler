@@ -14,8 +14,11 @@
 # Based on the ia64 boot/Makefile.
 #
 
-include $(srctree)/arch/arm64/boot/dts/huawei/Makefile
 
+include $(srctree)/arch/arm64/boot/dts/14049_HW_11/Makefile
+include $(srctree)/arch/arm64/boot/dts/14049_HW_12/Makefile
+include $(srctree)/arch/arm64/boot/dts/14049_HW_13/Makefile
+include $(srctree)/arch/arm64/boot/dts/14049_HW_14/Makefile
 targets := Image Image-dtb Image.gz Image.gz-dtb
 
 DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))

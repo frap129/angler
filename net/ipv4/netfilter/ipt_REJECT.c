@@ -129,6 +129,24 @@ static void send_reset(struct sk_buff *oldskb, int hook)
 static inline void send_unreach(struct sk_buff *skb_in, int code)
 {
 	icmp_send(skb_in, ICMP_DEST_UNREACH, code, 0);
+#ifdef CONFIG_IP_NF_TARGET_REJECT_SKERR
+	if (skb_in->sk) {
+		skb_in->sk->sk_err = icmp_err_convert[code].errno;
+/*Modified by liwei for fix panic issue,  fixskb -> sk ->sk_error_report error*/
+#ifdef VENDOR_EDIT
+		if(skb_in->sk->sk_state != TCP_TIME_WAIT){
+			skb_in->sk->sk_error_report(skb_in->sk);
+			pr_debug("ipt_REJECT: sk_err=%d for skb=%p sk=%p\n",
+			        skb_in->sk->sk_err, skb_in, skb_in->sk);
+		}
+#else
+	    skb_in->sk->sk_error_report(skb_in->sk);
+	    pr_debug("ipt_REJECT: sk_err=%d for skb=%p sk=%p\n",
+			    skb_in->sk->sk_err, skb_in, skb_in->sk);
+
+#endif
+	}
+#endif
 }
 
 static unsigned int

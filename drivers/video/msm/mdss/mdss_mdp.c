@@ -1228,8 +1228,11 @@ int mdss_iommu_init(struct mdss_data_type *mdata)
 
 	return 0;
 }
-
+#ifndef VENDOR_EDIT
 static void mdss_debug_enable_clock(int on)
+#else
+void mdss_debug_enable_clock(int on)
+#endif
 {
 	if (on)
 		mdss_mdp_clk_ctrl(MDP_BLOCK_POWER_ON);

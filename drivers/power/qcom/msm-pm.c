@@ -43,6 +43,7 @@
 #include "idle.h"
 #include "pm-boot.h"
 #include "../../../arch/arm/mach-msm/clock.h"
+#include <linux/sched.h>
 
 #define SCM_CMD_TERMINATE_PC	(0x2)
 #define SCM_CMD_CORE_HOTPLUGGED (0x10)

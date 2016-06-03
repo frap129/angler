@@ -25,10 +25,7 @@
 
 #define DWC3_IDEV_CHG_MAX 1500
 #define DWC3_HVDCP_CHG_MAX 1800
-
-/* added for floated charger */
-#define DWC3_FLOAT_CHG_MAX 1000
-
+#define DWC3_SDP_CHG_MAX 500
 /*
  * Module param to override current drawn for DCP charger
  * Declared in dwc3-msm module

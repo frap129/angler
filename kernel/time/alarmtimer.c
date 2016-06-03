@@ -13,7 +13,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ *  published by the Free Software Foundation.
  */
 #include <linux/time.h>
 #include <linux/hrtimer.h>
@@ -54,10 +54,36 @@ static struct wakeup_source *ws;
 static struct rtc_timer		rtctimer;
 static struct rtc_device	*rtcdev;
 static DEFINE_SPINLOCK(rtcdev_lock);
-static unsigned long power_on_alarm;
 static struct mutex power_on_alarm_lock;
 
-void set_power_on_alarm(long secs, bool enable)
+	rtc_tm_to_time(&rt, &alarm_time);
+
+	if (alarm_time) {
+		alarm_ktime = ktime_set(alarm_time, 0);
+		alarm_init(&init_alarm, ALARM_POWEROFF_REALTIME, NULL);
+		alarm_start(&init_alarm, alarm_ktime);
+	}
+}
+
+
+
+#ifndef VENDOR_EDIT  //shankai@oem add 2015-11-14 power up alarm support
+static  unsigned long power_on_alarm;
+#endif
+
+#ifdef VENDOR_EDIT  //shankai@oem add 2015-11-14 power up alarm support
+static struct workqueue_struct *power_off_alarm_workqueue;
+#endif
+
+/**
+ * set_power_on_alarm - set power on alarm value into rtc register
+ *
+ * Get the soonest power off alarm timer and set the alarm value into rtc
+ * register.
+ */
+
+#ifdef VENDOR_EDIT  //shankai@oem add 2015-11-14 power up alarm support
+void set_power_on_alarm(void)
 {
 	int rc;
 	struct timespec wall_time;
@@ -112,6 +138,10 @@ disable_alarm:
 exit:
 	mutex_unlock(&power_on_alarm_lock);
 }
+
+#endif //VENDOR_EDIT
+
+
 
 static void alarmtimer_triggered_func(void *p)
 {
@@ -365,8 +395,8 @@ static int alarmtimer_resume(struct device *dev)
 	if (!rtc)
 		return 0;
 	rtc_timer_cancel(rtc, &rtctimer);
+	queue_delayed_work(power_off_alarm_workqueue, &work, 0);
 
-	set_power_on_alarm(power_on_alarm , 1);
 	return 0;
 }
 #else
@@ -542,7 +572,8 @@ u64 alarm_forward_now(struct alarm *alarm, ktime_t interval)
  * clock2alarm - helper that converts from clockid to alarmtypes
  * @clockid: clockid.
  */
-static enum alarmtimer_type clock2alarm(clockid_t clockid)
+ #ifdef VENDOR_EDIT  //shankai@oem add 2015-11-14 power up alarm support
+ enum alarmtimer_type clock2alarm(clockid_t clockid)
 {
 	if (clockid == CLOCK_REALTIME_ALARM)
 		return ALARM_REALTIME;
@@ -550,6 +581,20 @@ static enum alarmtimer_type clock2alarm(clockid_t clockid)
 		return ALARM_BOOTTIME;
 	return -1;
 }
+
+ #else
+static enum alarmtimer_type clock2alarm(clockid_t clockid)
+{
+	if (clockid == CLOCK_REALTIME_ALARM)
+		return ALARM_REALTIME;
+	if (clockid == CLOCK_BOOTTIME_ALARM)
+		return ALARM_BOOTTIME;
+	if (clockid == CLOCK_POWEROFF_ALARM)
+		return ALARM_POWEROFF_REALTIME;
+	return -1;
+}
+
+#endif
 
 /**
  * alarm_handle_timer - Callback for posix timers
@@ -930,6 +975,10 @@ static int __init alarmtimer_init(void)
 
 	posix_timers_register_clock(CLOCK_REALTIME_ALARM, &alarm_clock);
 	posix_timers_register_clock(CLOCK_BOOTTIME_ALARM, &alarm_clock);
+
+    #ifdef VENDOR_EDIT  //shankai@oem add 2015-11-14  for power off alarm support
+	posix_timers_register_clock(CLOCK_POWEROFF_ALARM, &alarm_clock);
+    #endif
 
 	/* Initialize alarm bases */
 	alarm_bases[ALARM_REALTIME].base_clockid = CLOCK_REALTIME;
