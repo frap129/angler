@@ -1360,7 +1360,7 @@ unsigned int __read_mostly sched_heavy_task;
  * capacity.
  */
 unsigned int sched_upmigrate;
-unsigned int sysctl_sched_upmigrate_pct = 80;
+unsigned int sysctl_sched_upmigrate_pct = 95; // for msm8992/msm8994
 
 /*
  * Big tasks, once migrated, will need to drop their bandwidth
@@ -1368,7 +1368,7 @@ unsigned int sysctl_sched_upmigrate_pct = 80;
  * migrated.
  */
 unsigned int sched_downmigrate;
-unsigned int sysctl_sched_downmigrate_pct = 60;
+unsigned int sysctl_sched_downmigrate_pct = 85; // for msm8992/msm8994
 
 /*
  * Tasks whose nice value is > sysctl_sched_upmigrate_min_nice are never
