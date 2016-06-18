@@ -583,13 +583,6 @@ endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
-PHONY += gcc-plugins
-gcc-plugins: scripts_basic
-ifdef CONFIG_GCC_PLUGINS
-	$(Q)$(MAKE) $(build)=scripts/gcc-plugins
-endif
-	@:
-
 include scripts/Makefile.gcc-plugins
 
 ifdef CONFIG_READABLE_ASM
