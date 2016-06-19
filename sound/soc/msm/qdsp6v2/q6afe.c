@@ -2954,11 +2954,8 @@ int afe_cmd_memory_map(phys_addr_t dma_addr_p, u32 dma_buf_sz)
 	}
 	if (atomic_read(&this_afe.status) > 0) {
 		if (__ratelimit(&rl))
-			pr_err("%s: config cmd failed [%s]\n",
-				__func__, adsp_err_get_err_str(
-				atomic_read(&this_afe.status)));
-		ret = adsp_err_get_lnx_err_code(
-				atomic_read(&this_afe.status));
+			pr_err("%s: Memory map cmd failed\n", __func__);
+		ret = -EINVAL;
 		goto fail_cmd;
 	}
 
