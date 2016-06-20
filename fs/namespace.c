@@ -2432,6 +2432,7 @@ static struct mnt_namespace *alloc_mnt_ns(struct user_namespace *user_ns)
  * Allocate a new namespace structure and populate it with contents
  * copied from the namespace of the passed in task structure.
  */
+__latent_entropy
 static struct mnt_namespace *dup_mnt_ns(struct mnt_namespace *mnt_ns,
 		struct user_namespace *user_ns, struct fs_struct *fs)
 {
