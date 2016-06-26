@@ -21,8 +21,7 @@ export HOSTLIBS
 $(HOSTLIBS)-y := $(foreach p,$(GCC_PLUGIN),$(if $(findstring /,$(p)),,$(p)))
 always := $($(HOSTLIBS)-y)
 
-cyc_complexity_plugin-objs := cyc_complexity_plugin.o
-sancov_plugin-objs := sancov_plugin.o
+$(foreach p,$($(HOSTLIBS)-y:%.so=%),$(eval $(p)-objs := $(p).o))
 
 subdir-y := $(GCC_PLUGIN_SUBDIR)
 subdir-  += $(GCC_PLUGIN_SUBDIR)
