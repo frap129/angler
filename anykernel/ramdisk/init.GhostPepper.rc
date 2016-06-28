@@ -1,0 +1,37 @@
+# Set GhostPepper profile for Interactive
+# Based on Alcolawl's Scripts
+# Created by SoniCron
+# Version 1.1
+on property:sys.boot_completed=1
+    # Apply settings to LITTLE cluster
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads 15 460800:25 600000:43 672000:65 787200:78 864000:92 960000:95 1248000:98 1478000:100
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack -1
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 384000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 10000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 20000 460800:10000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 200
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 60000
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse_duration 0
+    # Apply settings to big cluster
+    write /sys/devices/system/cpu/cpu4/online 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 633600
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads 31 768000:43 864000:56 960000:79 1248000:76 1344000:85 1440000:92 1536000:95 1632000:98 1728000:99 1824000:100
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack -1
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 633600
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 40000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay 40000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 200
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 40000
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 0
+    # Apply boost and thermal settings
+    write /sys/module/cpu_boost/parameters/input_boost_enabled 1
+    write /sys/module/cpu_boost/parameters/input_boost_freq 0:672000 1:672000 2:672000 3:672000 4:0 5:0 6:0 7:0
+    write /sys/module/cpu_boost/parameters/boost_ms 0
+    write /sys/module/cpu_boost/parameters/input_boost_ms 40
+    write /sys/module/msm_performance/parameters/touchboost 0
+    write /sys/module/msm_thermal/core_control/enabled 0
+    write /sys/module/msm_thermal/parameters/enabled Y
