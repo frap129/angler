@@ -215,13 +215,13 @@ patch_fstab() {
 ## AnyKernel permissions
 # set permissions for included files
 chmod -R 755 $ramdisk
-chmod 644 $ramdisk/sbin/media_profiles.xml
-
 
 ## AnyKernel install
 dump_boot;
 # Start ramdisk changes
 backup_file init.angler.rc;
+replace_string init.angler.rc "#    verity_load_state" "    verity_load_state" "#    verity_load_state"
+replace_string init.angler.rc "#    verity_update_state" "    verity_update_state" "#    verity_update_state"
 append_rc init.angler.rc "GhostPepper" init.GhostPepper.rc;
 
 write_boot;
