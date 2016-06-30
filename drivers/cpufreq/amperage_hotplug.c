@@ -20,18 +20,18 @@
 #include <linux/powersuspend.h>
 #include <linux/cpufreq.h>
 #include <linux/sched.h>
+#include <linux/delay.h>
 
 #define AMPERAGE "amperage"
 #define DEFAULT_PLUGGING_THRESHOLD 1497600000
 #define DEFAULT_SUSPEND_CHECK_RATE 10000
 
-unsigned int plugging_threshold = DEFAULT_PLUGGING_THRESHOLD
-module_param(plugging_threshold, int, 0644);
-unsigned int suspend_check_rate = DEFAULT_SUSPEND_CHECK_RATE
-module_param(suspend_check_rate, int, 0644);
 
-static void __cpuinit core_handling(bool suspended, int freq0, int freq1, int freq4)
+static inline void __cpuinit core_handling(bool suspended, int freq0, int freq1, int freq4)
 {
+	unsigned int plugging_threshold = DEFAULT_PLUGGING_THRESHOLD;
+//	module_param(plugging_threshold, int, 0644);
+
 	if(suspended){
 		if (cpu_online(5))
                         cpu_down(5);
@@ -46,14 +46,14 @@ static void __cpuinit core_handling(bool suspended, int freq0, int freq1, int fr
 				return;
 		}
 	} else {
-		if (cpu_offline(1) && freq0 >= plugging_threshold) {
+		if (!cpu_online(1) && freq0 >= plugging_threshold) {
 			cpu_up(1);
 			return;
 		} else {
 			cpu_down(1);
 			return;
 		}
-		if (cpu_offline(4) && freq1 >= plugging_threshold) {
+		if (!cpu_online(4) && freq1 >= plugging_threshold) {
 			cpu_down(1);
 			cpu_up(4);
 			return;
@@ -72,8 +72,10 @@ static void __cpuinit core_handling(bool suspended, int freq0, int freq1, int fr
 	}
 }
 
-static void amperage_main(void);
+static void amperage_main(void)
 {
+	unsigned int suspend_check_rate = DEFAULT_SUSPEND_CHECK_RATE;
+//	module_param(suspend_check_rate, int, 0644);
 	int curfreq0 = cpufreq_get(0);
 	int curfreq1 = cpufreq_get(1);
 	int curfreq4 = cpufreq_get(4);
@@ -90,11 +92,12 @@ static int __init start_amperage(void)
 {
 	pr_info("%s: init\n", AMPERAGE);
 	amperage_main();
+	return 0;
 }
 
 static void __exit exit_amperage(void)
 {
-	return 0;
+	return;
 }
 
 MODULE_LICENSE("GPL and additional rights");
