@@ -38,7 +38,7 @@ static inline void __cpuinit core_handling(bool suspended, int freq0, int freq1,
 		if (cpu_online(4))
 			cpu_down(4);
 		if (freq0 >= plugging_threshold) {
-			cpu_up(2);
+			cpu_up(1);
 			return;
 		} else {
 			if (cpu_online(1))
