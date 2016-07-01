@@ -40,8 +40,7 @@ struct vmpressure {
 	unsigned int nr_windows[VMPRESSURE_NUM_LEVELS];
 	unsigned long scanned;
 	unsigned long reclaimed;
-	unsigned long stall;
-	/* The lock is used to keep the scanned/reclaimed above in sync. */
+	/* The lock is used to keep the members above in sync. */
 	struct mutex sr_lock;
 
 	/* The list of vmpressure_event structs. */
