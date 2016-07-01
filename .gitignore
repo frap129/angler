@@ -96,3 +96,8 @@ upload.sh
 firmware/synaptics/startup_fw_update-fhd.img
 firmware/synaptics/startup_fw_update.img
 kernel/x509_certificate_list
+
+# Electron Ignores
+*.rej
+*.save*
+*.old
