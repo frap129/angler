@@ -95,3 +95,9 @@ build.sh
 firmware/synaptics/startup_fw_update-fhd.img
 firmware/synaptics/startup_fw_update.img
 upload.sh
+
+
+# Electron Ignores
+*.rej
+*.save*
+*.old
