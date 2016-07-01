@@ -323,7 +323,7 @@ $(srctree)/scripts/Kbuild.include: ;
 include $(srctree)/scripts/Kbuild.include
 
 # Set optimization flags for gcc
-FLAGS := -mno-android -march=armv8-a+crypto -mtune=cortex-a57.cortex-a53 -mcpu=cortex-a57.cortex-a53+crypto -mfpu=crypto-neon-fp-armv8 -O3 -fgraphite -fgraphite-identity -floop-strip-mine -fmodulo-sched-allow-regmoves -ftree-loop-vectorize -ftree-slp-vectorize -fvect-cost-model -fsingle-precision-constant -fpredictive-commoning
+FLAGS := -mno-android -march=armv8-a+crypto -mtune=cortex-a57.cortex-a53 -mcpu=cortex-a57.cortex-a53+crypto -O3 -fgraphite -fgraphite-identity -floop-strip-mine -fmodulo-sched-allow-regmoves -ftree-loop-vectorize -ftree-slp-vectorize -fvect-cost-model -fsingle-precision-constant -fpredictive-commoning
 
 # Make variables (CC, etc...)
 
