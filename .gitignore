@@ -101,3 +101,5 @@ upload.sh
 *.rej
 *.save*
 *.old
+out
+anykernel/Image.gz-dtb
