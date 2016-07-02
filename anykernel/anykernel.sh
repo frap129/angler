@@ -222,6 +222,19 @@ dump_boot;
 backup_file init.angler.rc;
 replace_string init.angler.rc "#    verity_load_state" "    verity_load_state" "#    verity_load_state"
 replace_string init.angler.rc "#    verity_update_state" "    verity_update_state" "#    verity_update_state"
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit 1958400";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq_hardlimit 384000";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq_hardlimit 1555200";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit 302400";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit";
+insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    # initialize frequency limits";
 insert_line init.angler.rc "init.GhostPepper.rc" after "import init.angler.sensorhub.rc" "import init.GhostPepper.rc";
 insert_line init.angler.rc "init.electron.rc" after "import init.GhostPepper.rc" "import init.electron.rc";
 write_boot;
