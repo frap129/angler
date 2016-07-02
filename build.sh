@@ -8,7 +8,7 @@
 export ARCH=arm
 export SUBARCH=arm
 export CROSS_COMPILE=placholder
-THREAD="-j$(bc <<< "$(grep -c ^processor /proc/cpuinfo)+2""
+THREAD=-j$(bc <<< $(grep -c ^processor /proc/cpuinfo)+2
 DEFCONFIG="angler_defconfig"
 KROOT="$(pwd)"
 AK_DIR="$KROOT/anykernel"
@@ -33,8 +33,8 @@ function clean_all {
 function make_kernel {
 		echo
 		make $DEFCONFIG
-		make $THREAD
-		cp -vr $ZIMAGE_DIR/$zImage-dtb $AK_DIR/zImage
+		if ! make $THREAD; then exit 1; fi;
+		cp -vr $IMAGE_DIR/Image.gz-dtb $AK_DIR/zImage
 }
 
 function make_modules {
