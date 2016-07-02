@@ -26,11 +26,15 @@
 #define DEFAULT_PLUGGING_THRESHOLD 1497600000
 #define DEFAULT_SUSPEND_CHECK_RATE 10000
 
+// sysfs tunables
+unsigned int plugging_threshold = DEFAULT_PLUGGING_THRESHOLD;
+module_param_named(amperage_plugging_threshold, plugging_threshold, int, 0644);
+unsigned int suspend_check_rate = DEFAULT_SUSPEND_CHECK_RATE;
+module_param_named(amperage_suspend_check_rate, suspend_check_rate, int, 0644);
+
 
 static inline void __cpuinit core_handling(bool suspended, int freq0, int freq1, int freq4)
 {
-	unsigned int plugging_threshold = DEFAULT_PLUGGING_THRESHOLD;
-//	module_param(plugging_threshold, int, 0644);
 
 	if(suspended){
 		if (cpu_online(5))
@@ -74,13 +78,11 @@ static inline void __cpuinit core_handling(bool suspended, int freq0, int freq1,
 
 static void amperage_main(void)
 {
-	unsigned int suspend_check_rate = DEFAULT_SUSPEND_CHECK_RATE;
-//	module_param(suspend_check_rate, int, 0644);
 	int curfreq0 = cpufreq_get(0);
 	int curfreq1 = cpufreq_get(1);
 	int curfreq4 = cpufreq_get(4);
 	while(power_suspended) {
-		core_handling(false, curfreq0, curfreq1, curfreq4);
+		core_handling(true, curfreq0, curfreq1, curfreq4);
 		msleep(suspend_check_rate);
 	}
 	while(!power_suspended) {
