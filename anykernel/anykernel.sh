@@ -222,8 +222,8 @@ dump_boot;
 backup_file init.angler.rc;
 replace_string init.angler.rc "#    verity_load_state" "    verity_load_state" "#    verity_load_state"
 replace_string init.angler.rc "#    verity_update_state" "    verity_update_state" "#    verity_update_state"
-append_rc init.angler.rc "GhostPepper" init.GhostPepper.rc;
-
+insert_line init.angler.rc "init.GhostPepper.rc" after "import init.angler.sensorhub.rc" "import init.GhostPepper.rc";
+insert_line init.angler.rc "init.electron.rc" after "import init.GhostPepper.rc" "import init.electron.rc";
 write_boot;
 
 ## end install

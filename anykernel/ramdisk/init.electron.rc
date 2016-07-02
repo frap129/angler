@@ -1,0 +1,30 @@
+# Tweaks thanks to fransiscofranco
+service special_power /init.special_power.sh
+    disabled
+    oneshot
+
+on property:sys.boot_completed=1
+    # Re-enable retention idle state
+    write /sys/module/lpm_levels/system/a53/cpu0/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a53/cpu1/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a53/cpu2/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a53/cpu3/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a57/cpu4/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a57/cpu5/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled 1
+
+    # Process Reclain
+    write /sys/module/process_reclaim/parameters/enable_process_reclaim 1
+    write /sys/module/process_reclaim/parameters/pressure_min 50
+    write /sys/module/process_reclaim/parameters/pressure_max 70
+    write /sys/module/process_reclaim/parameters/per_swap_size 512
+    write /sys/module/process_reclaim/parameters/swap_opt_eff 30
+
+    # Disable some Wlan wakelocks
+    write /sys/module/wakeup/parameters/enable_wlan_rx_wake_ws 0
+    write /sys/module/wakeup/parameters/enable_wlan_ctrl_wake_ws 0
+    write /sys/module/wakeup/parameters/enable_wlan_wake_ws 0
+
+    # Start Power tweaks
+    start special_power
