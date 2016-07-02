@@ -5,36 +5,33 @@
 
 
 # Variables
-export ARCH=arm
-export SUBARCH=arm
-export CROSS_COMPILE=placholder
-THREAD=-j$(bc <<< $(grep -c ^processor /proc/cpuinfo)+2
+export ARCH=arm64
+export SUBARCH=arm64
+export CROSS_COMPILE="/home/frap129/android/kernel/aarch64-linux-android-6.x/bin/aarch64-linux-android-"
+THREAD=-j$(bc <<< $(grep -c ^processor /proc/cpuinfo)+2)
 DEFCONFIG="angler_defconfig"
 KROOT="$(pwd)"
 AK_DIR="$KROOT/anykernel"
 PATCH_DIR="$AK_DIR/patch"
-MODULES_DIR="$AK_DIR/modules"
 ZIP_MOVE="$KROOT/out"
-ZIMAGE_DIR="$KROOT/arch/arm/boot"
+IMAGE_DIR="$KROOT/arch/arm64/boot"
 REL="1"
 
 
 # Functions
 function clean_all {
 		cd $AK_DIR
-		rm -rf $MODULES_DIR/*
-		rm -rf zImage-dtb
-		rm -rf zImage
+		rm -rf Image.gz-dtb
 		cd $KROOT
 		echo
 		make mrproper
 }
 
 function make_kernel {
-		echo
+		clear
 		make $DEFCONFIG
 		if ! make $THREAD; then exit 1; fi;
-		cp -vr $IMAGE_DIR/Image.gz-dtb $AK_DIR/zImage
+		cp -vr $IMAGE_DIR/Image.gz-dtb $AK_DIR/Image.gz-dtb
 }
 
 function make_modules {
@@ -51,6 +48,11 @@ function make_zip {
 		cd $KERNEL_DIR
 }
 
+# Allow functions to be run through arguments
+if [ -n "$1" ]; then
+  $1
+  exit 0;
+fi;
 
 while read -p "Clean before build (y/n)? " cchoice
 do
@@ -100,3 +102,4 @@ echo
 echo "Image size: $(du -h $IMAGE_DIR/Image.gz-dtb)"
 echo
 echo "Zip size: $(du -h $ZIP_MOVE/*.zip)"
+
