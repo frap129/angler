@@ -99,4 +99,4 @@ echo "$(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
 echo
 echo "Image size: $(du -h $IMAGE_DIR/Image.gz-dtb)"
 echo
-echo "Zip size: $(du -h $ZIP_DIR/*.zip)"
+echo "Zip size: $(du -h $ZIP_MOVE/*.zip)"
