@@ -103,3 +103,4 @@ upload.sh
 *.old
 out
 anykernel/Image.gz-dtb
+anykernel/zImage
