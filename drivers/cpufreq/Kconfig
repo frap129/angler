@@ -20,9 +20,6 @@ if CPU_FREQ
 config CPU_FREQ_GOV_COMMON
 	bool
 
-config AMPERAGE_HOTPLUG
-	bool
-
 config SCHED_FREQ_INPUT
 	bool "Scheduler inputs to cpufreq governor"
 	depends on SCHED_HMP
