@@ -21,9 +21,7 @@ config CPU_FREQ_GOV_COMMON
 	bool
 
 config AMPERAGE_HOTPLUG
-	bool "Amperage CPU Hotplugging driver"
-	depends on POWERSUSPEND
-	default y
+	bool
 
 config SCHED_FREQ_INPUT
 	bool "Scheduler inputs to cpufreq governor"
