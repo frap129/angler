@@ -21,7 +21,7 @@ REL="1"
 # Functions
 function clean_all {
 		cd $AK_DIR
-		rm -rf Image.gz-dtb
+		rm -rf zImage
 		cd $KROOT
 		echo
 		make mrproper
@@ -31,7 +31,7 @@ function make_kernel {
 		clear
 		make $DEFCONFIG
 		if ! make $THREAD; then exit 1; fi;
-		cp -vr $IMAGE_DIR/Image.gz-dtb $AK_DIR/Image.gz-dtb
+		cp -vr $IMAGE_DIR/Image.gz-dtb $AK_DIR/zImage
 }
 
 function make_modules {
