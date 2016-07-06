@@ -241,6 +241,15 @@ insert_line init.angler.rc "init.electron.rc" after "import init.GhostPepper.rc"
 # Start fstab changes
 patch_fstab fstab.angler /data ext4 options "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,forceencrypt=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata" "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,encryptable=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata"
 patch_fstab fstab.angler /system ext4 options "ro,barrier=1" "rw,barrier=1,noatime"
+
+# add frandom compatibility
+backup_file ueventd.rc;
+insert_line ueventd.rc "frandom" after "urandom" "/dev/frandom              0666   root       root\n";
+insert_line ueventd.rc "erandom" after "urandom" "/dev/erandom              0666   root       root\n";
+backup_file file_contexts;
+insert_line file_contexts "frandom" after "urandom" "/dev/frandom		u:object_r:frandom_device:s0\n";
+insert_line file_contexts "erandom" after "urandom" "/dev/erandom               u:object_r:erandom_device:s0\n";
+
 write_boot;
 
 ## end install
