@@ -29,7 +29,7 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 0
     # Apply boost and thermal settings
     write /sys/module/cpu_boost/parameters/input_boost_enabled 1
-    write /sys/module/cpu_boost/parameters/input_boost_freq 0:672000 1:672000 2:672000 3:672000 4:0 5:0 6:0 7:0
+    write /sys/module/cpu_boost/parameters/input_boost_freq 0:672000 1:0 2:0 3:0 4:0 5:0 6:0 7:0
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 40
     write /sys/module/msm_performance/parameters/touchboost 0
