@@ -235,8 +235,7 @@ insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power
 insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit";
 insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit";
 insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    # initialize frequency limits";
-insert_line init.angler.rc "init.GhostPepper.rc" after "import init.angler.sensorhub.rc" "import init.GhostPepper.rc";
-insert_line init.angler.rc "init.electron.rc" after "import init.GhostPepper.rc" "import init.electron.rc";
+insert_line init.angler.rc "init.electron.rc" after "import init.angler.sensorhub.rc" "import init.electron.rc";
 
 # Start fstab changes
 patch_fstab fstab.angler /data ext4 options "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,forceencrypt=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata" "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,encryptable=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata"
