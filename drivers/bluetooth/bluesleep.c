@@ -697,13 +697,6 @@ static const struct file_operations bluesleep_proc_readwrite_fops = {
 	.release = single_release,
 
 };
-static const struct file_operations bluesleep_proc_read_fops = {
-	.owner	= THIS_MODULE,
-	.open	= bluesleep_proc_open,
-	.read   = seq_read,
-	.release = single_release,
-
-};
 
 /**
  * Initializes the module.

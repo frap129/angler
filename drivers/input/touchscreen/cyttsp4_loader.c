@@ -2178,7 +2178,6 @@ static struct cyttsp4_driver cyttsp4_loader_driver = {
 		   },
 };
 
-static const char cyttsp4_loader_name[] = CYTTSP4_LOADER_NAME;
 static struct cyttsp4_device_info cyttsp4_loader_infos[CY_MAX_NUM_CORE_DEVS];
 
 static char *core_ids[CY_MAX_NUM_CORE_DEVS] = {

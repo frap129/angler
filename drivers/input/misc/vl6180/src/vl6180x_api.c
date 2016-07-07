@@ -80,20 +80,6 @@ static const uint16_t ScalerLookUP[] ROMABLE_DATA = { 253, 127, 84 };	/* lookup 
  */
 static const uint16_t UpperLimitLookUP[] ROMABLE_DATA = { 185, 370, 580 };	/* lookup table for scaling->limit  1x2x3x */
 
-/**
- * Als Code gain to fix point gain lookup
- */
-static const uint16_t AlsGainLookUp[8] ROMABLE_DATA = {
-	(uint16_t) (20.0f * AN_GAIN_MULT),
-	(uint16_t) (10.0f * AN_GAIN_MULT),
-	(uint16_t) (5.0f * AN_GAIN_MULT),
-	(uint16_t) (2.5f * AN_GAIN_MULT),
-	(uint16_t) (1.67f * AN_GAIN_MULT),
-	(uint16_t) (1.25f * AN_GAIN_MULT),
-	(uint16_t) (1.0f * AN_GAIN_MULT),
-	(uint16_t) (40.0f * AN_GAIN_MULT),
-};
-
 
 #if VL6180x_RANGE_STATUS_ERRSTRING
 const char *ROMABLE_DATA VL6180x_RangeStatusErrString[] = {
@@ -486,6 +472,20 @@ int VL6180x_Prepare(VL6180xDev_t dev)
 }
 
 #if VL6180x_ALS_SUPPORT
+/**
+ * Als Code gain to fix point gain lookup
+ */
+static const uint16_t AlsGainLookUp[8] ROMABLE_DATA = {
+	(uint16_t) (20.0f * AN_GAIN_MULT),
+	(uint16_t) (10.0f * AN_GAIN_MULT),
+	(uint16_t) (5.0f * AN_GAIN_MULT),
+	(uint16_t) (2.5f * AN_GAIN_MULT),
+	(uint16_t) (1.67f * AN_GAIN_MULT),
+	(uint16_t) (1.25f * AN_GAIN_MULT),
+	(uint16_t) (1.0f * AN_GAIN_MULT),
+	(uint16_t) (40.0f * AN_GAIN_MULT),
+};
+
 int VL6180x_AlsGetLux(VL6180xDev_t dev, lux_t *pLux)
 {
 	int status;
