@@ -1115,11 +1115,6 @@ static const struct of_device_id arm_cci_matches[] = {
 	{},
 };
 
-static const struct of_device_id arm_cci_ctrl_if_matches[] = {
-	{.compatible = "arm,cci-400-ctrl-if", },
-	{},
-};
-
 #ifdef CONFIG_ARM64
 static int cci_probe(void)
 {
