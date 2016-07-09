@@ -222,26 +222,13 @@ dump_boot;
 backup_file init.angler.rc;
 replace_string init.angler.rc "#    verity_load_state" "    verity_load_state" "#    verity_load_state"
 replace_string init.angler.rc "#    verity_update_state" "    verity_update_state" "#    verity_update_state"
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit 1958400";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq_hardlimit 384000";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq_hardlimit 1555200";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit 302400";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit";
-insert_line init.rc "# initialize frequency limits" after "chmod 0660 /sys/power/wake_unlock" "    # initialize frequency limits";
-insert_line init.angler.rc "init.electron.rc" after "import init.angler.sensorhub.rc" "import init.electron.rc";
+append_file init.angler.rc "# Start Electron changes" init.electron.rc
 
 # Start fstab changes
 patch_fstab fstab.angler /data ext4 options "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,forceencrypt=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata" "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,encryptable=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata"
 patch_fstab fstab.angler /system ext4 options "ro,barrier=1" "rw,barrier=1,noatime"
 
-# add frandom compatibility
+# Add frandom compatibility
 backup_file ueventd.rc;
 insert_line ueventd.rc "frandom" after "urandom" "/dev/frandom              0666   root       root\n";
 insert_line ueventd.rc "erandom" after "urandom" "/dev/erandom              0666   root       root\n";
