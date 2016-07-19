@@ -1,11 +1,17 @@
 # Start Electron changes
 # Tweaks thanks to fransiscofranco and AK
-service special_power /init.special_power.sh
+service special_power /system/bin/sh /init.special_power.sh
     disabled
+    class late_start
+    user root
+    group root
     oneshot
 
-service chill /init.eletron.sh
+service chill /system/bin/sh /init.electron.sh
     disabled
+    class late_strt
+    user root
+    group root
     oneshot
 
 on property:sys.boot_completed=1

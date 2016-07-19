@@ -1,3 +1,4 @@
+#!/system/bin/sh
 #Author: xSilas43 and frap129
 #Credits: Ideas - SoniCron, Awesome Scripts - Alcolawl, Configuration - xSilas43
 #Device: angler
@@ -35,9 +36,7 @@ echo 2000 > /sys/devices/system/cpu/cpu0/cpufreq/chill/sampling_rate
 echo 95 > /sys/devices/system/cpu/cpu0/cpufreq/chill/up_threshold
 echo 10 > /sys/devices/system/cpu/cpu0/cpufreq/chill/sleep_depth
 echo 5 > /sys/devices/system/cpu/cpu0/cpufreq/chill/freq_step
-echo 1 > /sys/devices/system/cpu/cpu0/cpufreq/chill/sampling_down_factor
 echo 0 > /sys/devices/system/cpu/cpu0/cpufreq/chill/ignore_nice_load
-echo 65 > /sys/devices/system/cpu/cpu4/cpufreq/chilll/down_threshold
 #Big Settings
 chmod 644 /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
 echo chill > /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
@@ -54,13 +53,10 @@ echo 20000 > /sys/devices/system/cpu/cpu4/cpufreq/chill/sampling_rate
 echo 95 > /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold
 echo 3 > /sys/devices/system/cpu/cpu4/cpufreq/chill/sleep_depth
 echo 5 > /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step
-echo 1 > /sys/devices/system/cpu/cpu4/cpufreq/chill/sampling_down_factor
 echo 0 > /sys/devices/system/cpu/cpu4/cpufreq/chill/ignore_nice_load
-echo Enable inputboost @ 960mhz for 40ms
 echo 0:960000 1:960000 2:960000 3:960000 4:0 5:0 6:0 7:0 > /sys/module/cpu_boost/parameters/input_boost_freq
 echo 0 > /sys/module/cpu_boost/parameters/boost_ms
 echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
 echo 1 > /sys/module/cpu_boost/parameters/input_boost_enabled
-echo 0 > /sys/module/msm_performance/parameters/touchboost
 echo 0 > /sys/module/msm_thermal/core_control/enabled
 echo N > /sys/module/msm_thermal/parameters/enabled
