@@ -7,7 +7,7 @@
 # Variables
 export ARCH=arm64
 export SUBARCH=arm64
-export CROSS_COMPILE="/home/frap129/android/kernel/aarch64-linux-android-6.x/bin/aarch64-linux-android-"
+export CROSS_COMPILE="/home/frap129/android/kernel/aarch64-linux-android-6.x-lto2/bin/aarch64-linux-android-"
 THREAD=-j$(bc <<< $(grep -c ^processor /proc/cpuinfo)+2)
 DEFCONFIG="angler_defconfig"
 KROOT="$(pwd)"
@@ -25,6 +25,7 @@ function clean_all {
 		cd $KROOT
 		echo
 		make mrproper
+		rm -rf $ZIP_MOVE/*
 }
 
 function make_kernel {
