@@ -45,6 +45,10 @@
 #define CACHE_LINE_SIZE 32
 #define CE_SHA_BLOCK_SIZE SHA256_BLOCK_SIZE
 
+#ifndef U32_MAX
+#define U32_MAX ((u32)(~0U))
+#endif
+
 /* are FIPS integrity tests done ?? */
 bool is_fips_qcedev_integritytest_done;
 
