@@ -2289,7 +2289,7 @@ dhd_set_mac_address(struct net_device *dev, void *addr)
 	dhdif->set_macaddress = TRUE;
 	dhd_net_if_unlock_local(dhd);
 	dhd_deferred_schedule_work(dhd->dhd_deferred_wq, (void *)dhdif, DHD_WQ_WORK_SET_MAC,
-		dhd_set_mac_addr_handler, DHD_WORK_PRIORITY_LOW);
+		dhd_set_mac_addr_handler, DHD_WQ_WORK_PRIORITY_LOW);
 	return ret;
 }
 
@@ -2305,7 +2305,7 @@ dhd_set_multicast_list(struct net_device *dev)
 
 	dhd->iflist[ifidx]->set_multicast = TRUE;
 	dhd_deferred_schedule_work(dhd->dhd_deferred_wq, (void *)dhd->iflist[ifidx],
-		DHD_WQ_WORK_SET_MCAST_LIST, dhd_set_mcast_list_handler, DHD_WORK_PRIORITY_LOW);
+		DHD_WQ_WORK_SET_MCAST_LIST, dhd_set_mcast_list_handler, DHD_WQ_WORK_PRIORITY_LOW);
 }
 
 #ifdef PROP_TXSTATUS
@@ -3012,15 +3012,22 @@ dhd_rx_frame(dhd_pub_t *dhdp, int ifidx, void *pktbuf, int numpkt, uint8 chan,
 		/* Process special event packets and then discard them */
 		memset(&event, 0, sizeof(event));
 		if (ntoh16(skb->protocol) == ETHER_TYPE_BRCM) {
-			dhd_wl_host_event(dhd, &ifidx,
+			int ret_event;
+
+			ret_event = dhd_wl_host_event(dhd, &ifidx,
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22)
 			skb_mac_header(skb),
 #else
 			skb->mac.raw,
 #endif /* LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 22) */
-			len - 2,
+			len,
 			&event,
 			&data);
+
+			if (ret_event != BCME_OK) {
+				PKTFREE(dhdp->osh, pktbuf, FALSE);
+				continue;
+			}
 
 			wl_event_to_host_order(&event);
 			if (!tout_ctrl)
@@ -4382,7 +4389,7 @@ dhd_event_ifadd(dhd_info_t *dhdinfo, wl_event_data_if_t *ifevent, char *name, ui
 		strncpy(if_event->name, name, IFNAMSIZ);
 		if_event->name[IFNAMSIZ - 1] = '\0';
 		dhd_deferred_schedule_work(dhdinfo->dhd_deferred_wq, (void *)if_event,
-			DHD_WQ_WORK_IF_ADD, dhd_ifadd_event_handler, DHD_WORK_PRIORITY_LOW);
+			DHD_WQ_WORK_IF_ADD, dhd_ifadd_event_handler, DHD_WQ_WORK_PRIORITY_LOW);
 	}
 
 	return BCME_OK;
@@ -4409,7 +4416,7 @@ dhd_event_ifdel(dhd_info_t *dhdinfo, wl_event_data_if_t *ifevent, char *name, ui
 	strncpy(if_event->name, name, IFNAMSIZ);
 	if_event->name[IFNAMSIZ - 1] = '\0';
 	dhd_deferred_schedule_work(dhdinfo->dhd_deferred_wq, (void *)if_event, DHD_WQ_WORK_IF_DEL,
-		dhd_ifdel_event_handler, DHD_WORK_PRIORITY_LOW);
+		dhd_ifdel_event_handler, DHD_WQ_WORK_PRIORITY_LOW);
 
 	return BCME_OK;
 }
@@ -6584,7 +6591,7 @@ static int dhd_inet6addr_notifier_call(struct notifier_block *this,
 
 	/* defer the work to thread as it may block kernel */
 	dhd_deferred_schedule_work(dhd->dhd_deferred_wq, (void *)ndo_info, DHD_WQ_WORK_IPV6_NDO,
-		dhd_inet6_work_handler, DHD_WORK_PRIORITY_LOW);
+		dhd_inet6_work_handler, DHD_WQ_WORK_PRIORITY_LOW);
 	return NOTIFY_DONE;
 }
 #endif /* #ifdef CONFIG_IPV6 */
@@ -7461,10 +7468,10 @@ dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata, size_t pktlen,
 
 #ifdef SHOW_LOGTRACE
 		bcmerror = wl_host_event(&dhd->pub, ifidx, pktdata, pktlen,
-				event, data, &dhd->event_data);
+			event, data, &dhd->event_data);
 #else
 		bcmerror = wl_host_event(&dhd->pub, ifidx, pktdata, pktlen,
-				event, data, NULL);
+			event, data, NULL);
 #endif /* SHOW_LOGTRACE */
 
 	if (bcmerror != BCME_OK)
@@ -7476,11 +7483,11 @@ dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata, size_t pktlen,
 		 * Wireless ext is on primary interface only
 		 */
 
-	ASSERT(dhd->iflist[*ifidx] != NULL);
-	ASSERT(dhd->iflist[*ifidx]->net != NULL);
+		ASSERT(dhd->iflist[*ifidx] != NULL);
+		ASSERT(dhd->iflist[*ifidx]->net != NULL);
 
 		if (dhd->iflist[*ifidx]->net) {
-		wl_iw_event(dhd->iflist[*ifidx]->net, event, *data);
+			wl_iw_event(dhd->iflist[*ifidx]->net, event, *data);
 		}
 	}
 #endif /* defined(WL_WIRELESS_EXT)  */
@@ -7488,6 +7495,7 @@ dhd_wl_host_event(dhd_info_t *dhd, int *ifidx, void *pktdata, size_t pktlen,
 #ifdef WL_CFG80211
 	ASSERT(dhd->iflist[*ifidx] != NULL);
 	ASSERT(dhd->iflist[*ifidx]->net != NULL);
+
 	if (dhd->iflist[*ifidx]->net)
 		wl_cfg80211_event(dhd->iflist[*ifidx]->net, event, *data);
 #endif /* defined(WL_CFG80211) */
@@ -8588,7 +8596,7 @@ int dhd_os_send_hang_message(dhd_pub_t *dhdp)
 		if (!dhdp->hang_was_sent) {
 			dhdp->hang_was_sent = 1;
 			dhd_deferred_schedule_work(dhdp->info->dhd_deferred_wq, (void *)dhdp,
-				DHD_WQ_WORK_HANG_MSG, dhd_hang_process, DHD_WORK_PRIORITY_HIGH);
+				DHD_WQ_WORK_HANG_MSG, dhd_hang_process, DHD_WQ_WORK_PRIORITY_HIGH);
 		}
 	}
 	return ret;
@@ -9900,7 +9908,7 @@ void dhd_schedule_memdump(dhd_pub_t *dhdp, uint8 *buf, uint32 size)
 	dump->bufsize = size;
 
 	dhd_deferred_schedule_work(dhdp->info->dhd_deferred_wq, (void *)dump,
-		DHD_WQ_WORK_SOC_RAM_DUMP, dhd_mem_dump_to_file, DHD_WORK_PRIORITY_HIGH);
+		DHD_WQ_WORK_SOC_RAM_DUMP, dhd_mem_dump_to_file, DHD_WQ_WORK_PRIORITY_HIGH);
 }
 int dhd_os_socram_dump(struct net_device *dev, uint32 *dump_size)
 {
