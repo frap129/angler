@@ -3,3 +3,7 @@ lib-y		:= bitops.o clear_user.o delay.o copy_from_user.o	\
 		   clear_page.o memchr.o memcpy.o memmove.o memset.o	\
 		   memcmp.o strcmp.o strncmp.o strlen.o strnlen.o	\
 		   strchr.o strrchr.o
+
+ifeq ($(COMPILER),clang)
+lib-y += eabi.o
+endif
