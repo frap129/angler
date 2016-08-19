@@ -1,12 +1,12 @@
 #!/system/bin/sh
 #Author: xSilas43 and frap129
 #Credits: Ideas - SoniCron, Awesome Scripts - Alcolawl, Configuration - xSilas43
-#Device: angler
-#Codename: ChillSide
-#Build: stable
-#Version: R1
-#Updated 30/03/2016
 
+#Wait for ramdisk and other processes to finish asserting changes
+sleep 45;
+
+#Set I/O sched
+echo maple > /sys/block/mmcblk0/queue/scheduler
 echo 1024 > /sys/block/mmcblk0/queue/read_ahead_kb
 
 #turn on all cores
