@@ -137,6 +137,7 @@ static void dump_instr(const char *lvl, struct pt_regs *regs)
 static void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
 {
 	struct stackframe frame;
+	const register unsigned long current_sp asm ("sp");
 
 	pr_debug("%s(regs = %p tsk = %p)\n", __func__, regs, tsk);
 
@@ -149,7 +150,7 @@ static void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
 		frame.pc = regs->pc;
 	} else if (tsk == current) {
 		frame.fp = (unsigned long)__builtin_frame_address(0);
-		frame.sp = current_stack_pointer;
+		frame.sp = current_sp;
 		frame.pc = (unsigned long)dump_backtrace;
 	} else {
 		/*
@@ -445,15 +446,6 @@ void __pgd_error(const char *file, int line, unsigned long val)
 {
 	printk("%s:%d: bad pgd %016lx.\n", file, line, val);
 }
-
-void abort(void)
-{
-	BUG();
-
-	/* if that doesn't kill us, halt */
-	panic("Oops failed to kill thread");
-}
-EXPORT_SYMBOL(abort);
 
 void __init trap_init(void)
 {

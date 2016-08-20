@@ -19,12 +19,6 @@ LIBGCC 		:= $(shell $(CC) $(KBUILD_CFLAGS) -print-libgcc-file-name)
 
 KBUILD_DEFCONFIG := defconfig
 
-ifeq ($(COMPILER),clang)
-KBUILD_CFLAGS   += -fno-builtin
-KBUILD_CFLAGS   += -Wno-asm-operand-widths
-KBUILD_CFLAGS   += -Wno-initializer-overrides
-endif
-
 KBUILD_CFLAGS	+= -mgeneral-regs-only
 KBUILD_CFLAGS	+= -fno-pic
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)

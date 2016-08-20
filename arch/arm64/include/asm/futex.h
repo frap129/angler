@@ -108,8 +108,7 @@ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
 	int ret = 0;
 	u32 val, tmp;
 
-	/* compiler may optimize uaddr to xzr if all uses are 0 which fails */
-	if (uaddr == 0 || !access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
+	if (!access_ok(VERIFY_WRITE, uaddr, sizeof(u32)))
 		return -EFAULT;
 
 	asm volatile("// futex_atomic_cmpxchg_inatomic\n"
