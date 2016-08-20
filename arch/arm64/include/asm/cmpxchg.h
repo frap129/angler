@@ -65,6 +65,7 @@ static inline unsigned long __xchg(unsigned long x, volatile void *ptr, int size
 		break;
 	default:
 		BUILD_BUG();
+		__compiletime_error();
 	}
 
 	smp_mb();
@@ -147,6 +148,7 @@ static inline unsigned long __cmpxchg(volatile void *ptr, unsigned long old,
 
 	default:
 		BUILD_BUG();
+		__compiletime_error();
 	}
 
 	return oldval;
