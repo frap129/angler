@@ -101,3 +101,5 @@ kernel/x509_certificate_list
 *.rej
 *.save*
 *.old
+out
+anykernel
