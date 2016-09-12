@@ -471,7 +471,7 @@ exit:
 }
 
 #ifdef CONFIG_MSM_HOTPLUG
-static void msm_hotplug_resume_call(struct work_struct *msm_hotplug_resume_call_work)
+static void __cpuinit msm_hotplug_resume_call(struct work_struct *msm_hotplug_resume_call_work)
 {
 	msm_hotplug_resume_timeout();
 }
