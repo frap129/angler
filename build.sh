@@ -15,7 +15,7 @@ AK_DIR="$KROOT/anykernel"
 PATCH_DIR="$AK_DIR/patch"
 ZIP_MOVE="$KROOT/out"
 IMAGE_DIR="$KROOT/arch/arm64/boot"
-REL="2"
+REL="3"
 
 
 # Functions
