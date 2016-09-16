@@ -120,3 +120,10 @@ on property:sys.boot_completed=1
     write /sys/module/msm_hotplug/big_core_up_delay 0
     write /sys/module/msm_hotplug/io_is_busy 1
     write /sys/module/msm_hotplug/load_levels "3 160 100"
+
+    # Set KSM configuration
+    write /sys/kernel/mm/ksm/pages_to_scan 512
+    write /sys/kernel/mm/ksm/sleep_millisecs 1000
+    write /sys/kernel/mm/ksm/merge_across_nodes 0
+    write /sys/kernel/mm/ksm/run 1
+    
