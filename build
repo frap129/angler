@@ -15,8 +15,8 @@ AK_DIR="$KROOT/anykernel"
 PATCH_DIR="$AK_DIR/patch"
 ZIP_MOVE="$KROOT/out"
 IMAGE_DIR="$KROOT/arch/arm64/boot"
-REL="1"
-
+REL="3"
+TESTVER="-$1"
 
 # Functions
 function clean_all {
@@ -41,11 +41,11 @@ function make_modules {
 
 function make_zip {
 		cd $AK_DIR
-		zip -r9 Electron-Release-"$REL".zip *
+		zip -r9 Electron-Release-"$REL""$TESTVER".zip *
 		if ! [ -d "$ZIP_MOVE" ]; then
 		  mkdir $ZIP_MOVE
 		fi;
-		mv Electron-Release-"$REL".zip $ZIP_MOVE
+		mv Electron-Release-"$REL""$TESTVER".zip $ZIP_MOVE
 		cd $KERNEL_DIR
 }
 
