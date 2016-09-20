@@ -17,6 +17,9 @@ ZIP_MOVE="$KROOT/out"
 IMAGE_DIR="$KROOT/arch/arm64/boot"
 REL="3"
 TESTVER="-$1"
+if [ "$TESTVER" = "-" ]; then
+unset TESTVER
+fi;
 
 # Functions
 function clean_all {
@@ -48,12 +51,6 @@ function make_zip {
 		mv Electron-Release-"$REL""$TESTVER".zip $ZIP_MOVE
 		cd $KERNEL_DIR
 }
-
-# Allow functions to be run through arguments
-if [ -n "$1" ]; then
-  $1
-  exit 0;
-fi;
 
 while read -p "Clean before build (y/n)? " cchoice
 do
