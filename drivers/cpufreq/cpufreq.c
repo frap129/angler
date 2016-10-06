@@ -30,11 +30,6 @@
 #include <linux/tick.h>
 #include <trace/events/power.h>
 
-/* HACK: Prevent big cluster turned off when changing governor settings. */
-#ifdef CONFIG_MSM_HOTPLUG
-#include <linux/workqueue.h>
-#endif
-
 // the hard limits are not per core but per cpu cluster
 static unsigned int min_freq_hardlimit[2] = {0, 0};
 static unsigned int max_freq_hardlimit[2] = {0, 0};
@@ -439,32 +434,10 @@ static ssize_t show_##file_name				\
 	return sprintf(buf, "%u\n", policy->object);	\
 }
 
-/* HACK: Prevent big cluster turned off when changing governor settings. */
-#ifdef CONFIG_MSM_HOTPLUG
-extern bool prevent_big_off;
-
-static void prevent_big_off_cancel(struct work_struct *prevent_big_off_cancel_work)
-{
-	prevent_big_off = false;
-}
-static DECLARE_DELAYED_WORK(prevent_big_off_cancel_work, prevent_big_off_cancel);
-
-static ssize_t show_scaling_min_freq
-(struct cpufreq_policy *policy, char *buf)
-{
-	prevent_big_off = true;
-	cancel_delayed_work(&prevent_big_off_cancel_work);
-	schedule_delayed_work(&prevent_big_off_cancel_work,
-			msecs_to_jiffies(5000));
-	return sprintf(buf, "%u\n", policy->min);
-}
-#else
-show_one(scaling_min_freq, min);
-#endif
-
 show_one(cpuinfo_min_freq, cpuinfo.min_freq);
 show_one(cpuinfo_max_freq, cpuinfo.max_freq);
 show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
+show_one(scaling_min_freq, min);
 show_one(scaling_max_freq, max);
 show_one(scaling_cur_freq, cur);
 
