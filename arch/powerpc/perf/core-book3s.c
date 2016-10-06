@@ -1825,7 +1825,7 @@ static void power_pmu_setup(int cpu)
 	cpuhw->mmcr[0] = MMCR0_FC;
 }
 
-static int
+static int __cpuinit
 power_pmu_notifier(struct notifier_block *self, unsigned long action, void *hcpu)
 {
 	unsigned int cpu = (long)hcpu;
@@ -1842,7 +1842,7 @@ power_pmu_notifier(struct notifier_block *self, unsigned long action, void *hcpu
 	return NOTIFY_OK;
 }
 
-int register_power_pmu(struct power_pmu *pmu)
+int __cpuinit register_power_pmu(struct power_pmu *pmu)
 {
 	if (ppmu)
 		return -EBUSY;		/* something's already registered */

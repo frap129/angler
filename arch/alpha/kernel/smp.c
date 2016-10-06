@@ -116,7 +116,7 @@ wait_boot_cpu_to_stop(int cpuid)
 /*
  * Where secondaries begin a life of C.
  */
-void
+void __cpuinit
 smp_callin(void)
 {
 	int cpuid = hard_smp_processor_id();
@@ -194,7 +194,7 @@ wait_for_txrdy (unsigned long cpumask)
  * Send a message to a secondary's console.  "START" is one such
  * interesting message.  ;-)
  */
-static void
+static void __cpuinit
 send_secondary_console_msg(char *str, int cpuid)
 {
 	struct percpu_struct *cpu;
@@ -285,7 +285,7 @@ recv_secondary_console_msg(void)
 /*
  * Convince the console to have a secondary cpu begin execution.
  */
-static int
+static int __cpuinit
 secondary_cpu_start(int cpuid, struct task_struct *idle)
 {
 	struct percpu_struct *cpu;
@@ -356,7 +356,7 @@ secondary_cpu_start(int cpuid, struct task_struct *idle)
 /*
  * Bring one cpu online.
  */
-static int
+static int __cpuinit
 smp_boot_one_cpu(int cpuid, struct task_struct *idle)
 {
 	unsigned long timeout;
@@ -472,7 +472,7 @@ smp_prepare_boot_cpu(void)
 {
 }
 
-int
+int __cpuinit
 __cpu_up(unsigned int cpu, struct task_struct *tidle)
 {
 	smp_boot_one_cpu(cpu, tidle);

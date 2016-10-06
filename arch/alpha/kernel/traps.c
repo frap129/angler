@@ -32,7 +32,7 @@
 
 static int opDEC_fix;
 
-static void
+static void __cpuinit
 opDEC_check(void)
 {
 	__asm__ __volatile__ (
@@ -1059,7 +1059,7 @@ give_sigbus:
 	return;
 }
 
-void
+void __cpuinit
 trap_init(void)
 {
 	/* Tell PAL-code what global pointer we want in the kernel.  */

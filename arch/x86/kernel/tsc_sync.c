@@ -25,24 +25,24 @@
  * Entry/exit counters that make sure that both CPUs
  * run the measurement code at once:
  */
-static atomic_t start_count;
-static atomic_t stop_count;
+static __cpuinitdata atomic_t start_count;
+static __cpuinitdata atomic_t stop_count;
 
 /*
  * We use a raw spinlock in this exceptional case, because
  * we want to have the fastest, inlined, non-debug version
  * of a critical section, to be able to prove TSC time-warps:
  */
-static arch_spinlock_t sync_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+static __cpuinitdata arch_spinlock_t sync_lock = __ARCH_SPIN_LOCK_UNLOCKED;
 
-static cycles_t last_tsc;
-static cycles_t max_warp;
-static int nr_warps;
+static __cpuinitdata cycles_t last_tsc;
+static __cpuinitdata cycles_t max_warp;
+static __cpuinitdata int nr_warps;
 
 /*
  * TSC-warp measurement loop running on both CPUs:
  */
-static void check_tsc_warp(unsigned int timeout)
+static __cpuinit void check_tsc_warp(unsigned int timeout)
 {
 	cycles_t start, now, prev, end;
 	int i;
@@ -121,7 +121,7 @@ static inline unsigned int loop_timeout(int cpu)
  * Source CPU calls into this - it waits for the freshly booted
  * target CPU to arrive and then starts the measurement:
  */
-void check_tsc_sync_source(int cpu)
+void __cpuinit check_tsc_sync_source(int cpu)
 {
 	int cpus = 2;
 
@@ -187,7 +187,7 @@ void check_tsc_sync_source(int cpu)
 /*
  * Freshly booted CPUs call into this:
  */
-void check_tsc_sync_target(void)
+void __cpuinit check_tsc_sync_target(void)
 {
 	int cpus = 2;
 

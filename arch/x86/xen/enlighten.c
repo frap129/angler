@@ -1725,7 +1725,7 @@ static void __init init_hvm_pv_info(void)
 	xen_domain_type = XEN_HVM_DOMAIN;
 }
 
-static int xen_hvm_cpu_notify(struct notifier_block *self,
+static int __cpuinit xen_hvm_cpu_notify(struct notifier_block *self,
 				    unsigned long action, void *hcpu)
 {
 	int cpu = (long)hcpu;
@@ -1744,7 +1744,7 @@ static int xen_hvm_cpu_notify(struct notifier_block *self,
 	return NOTIFY_OK;
 }
 
-static struct notifier_block xen_hvm_cpu_notifier = {
+static struct notifier_block xen_hvm_cpu_notifier __cpuinitdata = {
 	.notifier_call	= xen_hvm_cpu_notify,
 };
 

@@ -187,7 +187,7 @@ core_initcall(twd_cpufreq_init);
 
 #endif
 
-static void twd_calibrate_rate(void)
+static void __cpuinit twd_calibrate_rate(void)
 {
 	unsigned long count;
 	u64 waitjiffies;
@@ -265,7 +265,7 @@ static void twd_get_clock(struct device_node *np)
 /*
  * Setup the local clock events for a CPU.
  */
-static int twd_timer_setup(struct clock_event_device *clk)
+static int __cpuinit twd_timer_setup(struct clock_event_device *clk)
 {
 	struct clock_event_device **this_cpu_clk;
 	int cpu = smp_processor_id();
@@ -308,7 +308,7 @@ static int twd_timer_setup(struct clock_event_device *clk)
 	return 0;
 }
 
-static struct local_timer_ops twd_lt_ops = {
+static struct local_timer_ops twd_lt_ops __cpuinitdata = {
 	.setup	= twd_timer_setup,
 	.stop	= twd_timer_stop,
 };

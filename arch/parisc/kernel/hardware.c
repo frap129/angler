@@ -1368,7 +1368,7 @@ const char *parisc_hardware_description(struct parisc_device_id *id)
 
 
 /* Interpret hversion (ret[0]) from PDC_MODEL(4)/PDC_MODEL_INFO(0) */
-enum cpu_type
+enum cpu_type __cpuinit
 parisc_get_cpu_type(unsigned long hversion)
 {
 	struct hp_cpu_type_mask *ptr;

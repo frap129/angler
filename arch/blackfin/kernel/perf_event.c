@@ -468,7 +468,7 @@ static void bfin_pmu_setup(int cpu)
 	memset(cpuhw, 0, sizeof(struct cpu_hw_events));
 }
 
-static int
+static int __cpuinit
 bfin_pmu_notifier(struct notifier_block *self, unsigned long action, void *hcpu)
 {
 	unsigned int cpu = (long)hcpu;

@@ -27,7 +27,7 @@
 #include <asm/spram.h>
 #include <asm/uaccess.h>
 
-static int mips_fpu_disabled;
+static int __cpuinitdata mips_fpu_disabled;
 
 static int __init fpu_disable(char *s)
 {
@@ -39,7 +39,7 @@ static int __init fpu_disable(char *s)
 
 __setup("nofpu", fpu_disable);
 
-int mips_dsp_disabled;
+int __cpuinitdata mips_dsp_disabled;
 
 static int __init dsp_disable(char *s)
 {
@@ -134,7 +134,7 @@ static inline void cpu_probe_vmbits(struct cpuinfo_mips *c)
 #endif
 }
 
-static void set_isa(struct cpuinfo_mips *c, unsigned int isa)
+static void __cpuinit set_isa(struct cpuinfo_mips *c, unsigned int isa)
 {
 	switch (isa) {
 	case MIPS_CPU_ISA_M64R2:
@@ -162,7 +162,7 @@ static void set_isa(struct cpuinfo_mips *c, unsigned int isa)
 	}
 }
 
-static char unknown_isa[] = KERN_ERR \
+static char unknown_isa[] __cpuinitdata = KERN_ERR \
 	"Unsupported ISA type, c0.config0: %d.";
 
 static inline unsigned int decode_config0(struct cpuinfo_mips *c)
@@ -296,7 +296,7 @@ static inline unsigned int decode_config4(struct cpuinfo_mips *c)
 	return config4 & MIPS_CONF_M;
 }
 
-static void decode_configs(struct cpuinfo_mips *c)
+static void __cpuinit decode_configs(struct cpuinfo_mips *c)
 {
 	int ok;
 
@@ -970,7 +970,7 @@ EXPORT_SYMBOL(__ua_limit);
 const char *__cpu_name[NR_CPUS];
 const char *__elf_platform;
 
-void cpu_probe(void)
+__cpuinit void cpu_probe(void)
 {
 	struct cpuinfo_mips *c = &current_cpu_data;
 	unsigned int cpu = smp_processor_id();
@@ -1055,7 +1055,7 @@ void cpu_probe(void)
 #endif
 }
 
-void cpu_report(void)
+__cpuinit void cpu_report(void)
 {
 	struct cpuinfo_mips *c = &current_cpu_data;
 

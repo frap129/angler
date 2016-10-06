@@ -150,7 +150,7 @@ static void convert_to_wide(unsigned long *addr)
 }
 
 #ifdef CONFIG_64BIT
-void set_firmware_width_unlocked(void)
+void __cpuinit set_firmware_width_unlocked(void)
 {
 	int ret;
 
@@ -167,7 +167,7 @@ void set_firmware_width_unlocked(void)
  * This function must be called before any pdc_* function that uses the
  * convert_to_wide function.
  */
-void set_firmware_width(void)
+void __cpuinit set_firmware_width(void)
 {
 	unsigned long flags;
 	spin_lock_irqsave(&pdc_lock, flags);
@@ -175,11 +175,11 @@ void set_firmware_width(void)
 	spin_unlock_irqrestore(&pdc_lock, flags);
 }
 #else
-void set_firmware_width_unlocked(void) {
+void __cpuinit set_firmware_width_unlocked(void) {
 	return;
 }
 
-void set_firmware_width(void) {
+void __cpuinit set_firmware_width(void) {
 	return;
 }
 #endif /*CONFIG_64BIT*/
@@ -301,7 +301,7 @@ int pdc_chassis_warn(unsigned long *warn)
 	return retval;
 }
 
-int pdc_coproc_cfg_unlocked(struct pdc_coproc_cfg *pdc_coproc_info)
+int __cpuinit pdc_coproc_cfg_unlocked(struct pdc_coproc_cfg *pdc_coproc_info)
 {
 	int ret;
 
@@ -322,7 +322,7 @@ int pdc_coproc_cfg_unlocked(struct pdc_coproc_cfg *pdc_coproc_info)
  * This PDC call returns the presence and status of all the coprocessors
  * attached to the processor.
  */
-int pdc_coproc_cfg(struct pdc_coproc_cfg *pdc_coproc_info)
+int __cpuinit pdc_coproc_cfg(struct pdc_coproc_cfg *pdc_coproc_info)
 {
 	int ret;
 	unsigned long flags;
