@@ -106,4 +106,4 @@ on property:sys.boot_completed=1
     write /sys/kernel/mm/ksm/sleep_millisecs 800
     write /sys/kernel/mm/ksm/merge_across_nodes 0
     write /sys/kernel/mm/ksm/deferred_timer 1
-    write /sys/kernel/mm/ksm/run 1
+    write /sys/kernel/mm/ksm/run 0
