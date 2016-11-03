@@ -102,3 +102,6 @@ on property:sys.boot_completed=1
    
     # Enable ZSwap
     write /sys/module/zswap/parameters/enabled Y
+    
+    # Set Swappiness
+    write /proc/sys/vm/swappiness 8
