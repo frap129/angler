@@ -18,6 +18,7 @@ on property:sys.boot_completed=1
     write /sys/module/process_reclaim/parameters/pressure_max 70
     write /sys/module/process_reclaim/parameters/per_swap_size 512
     write /sys/module/process_reclaim/parameters/swap_opt_eff 30
+    write /proc/PID/reclaim all
 
     # Disable some Wlan wakelocks
     write /sys/module/wakeup/parameters/enable_wlan_rx_wake_ws 0
