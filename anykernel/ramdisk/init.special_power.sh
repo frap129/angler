@@ -39,3 +39,6 @@ get-set-forall /sys/class/devfreq/qcom,cpubw*/bw_hwmon/up_scale 250
 get-set-forall /sys/class/devfreq/qcom,cpubw*/bw_hwmon/idle_mbps 1600
 get-set-forall /sys/class/devfreq/qcom,mincpubw*/governor cpufreq
 
+# Apply fq pie packet sched
+tc qdisc add dev wlan0 root fq_pie
+tc qdisc add dev rmnet_data0 root fq_pie
