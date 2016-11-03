@@ -15,8 +15,8 @@ AK_DIR="$KROOT/anykernel"
 PATCH_DIR="$AK_DIR/patch"
 ZIP_MOVE="$KROOT/out"
 IMAGE_DIR="$KROOT/arch/arm64/boot"
-REL="4"
-TESTVER="-$1"
+export REL="4"
+export TESTVER="-$1"
 if [ "$TESTVER" = "-" ]; then
 unset TESTVER
 fi;
@@ -44,6 +44,7 @@ function make_modules {
 
 function make_zip {
 		cd $AK_DIR
+		sed -i "s/kernel.rel=.*/kernel.rel=$REL$TESTVER/g" anykernel.sh
 		zip -r9 Electron-Release-"$REL""$TESTVER".zip *
 		if ! [ -d "$ZIP_MOVE" ]; then
 		  mkdir $ZIP_MOVE
