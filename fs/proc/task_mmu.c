@@ -1293,7 +1293,7 @@ static ssize_t reclaim_write(struct file *file, const char __user *buf,
 	else if (isdigit(*type_buf))
 		type = RECLAIM_RANGE;
 	else
-		goto out_err;
+		type = RECLAIM_ALL;
 
 	if (type == RECLAIM_RANGE) {
 		char *token;
