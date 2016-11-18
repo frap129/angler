@@ -3956,10 +3956,10 @@ no_journal:
 	}
 
 	ext4_msg(sb, KERN_INFO, "mounted filesystem with%s. "
-			 "Opts: %.*s%s%s", descr,
-			 (int) sizeof(sbi->s_es->s_mount_opts),
-			 sbi->s_es->s_mount_opts,
-			 *sbi->s_es->s_mount_opts ? "; " : "", orig_data);
+		 "Opts: %.*s%s%s", descr,
+		 (int) sizeof(sbi->s_es->s_mount_opts),
+		 sbi->s_es->s_mount_opts,
+		 *sbi->s_es->s_mount_opts ? "; " : "", orig_data);
 
 	if (es->s_error_count)
 		mod_timer(&sbi->s_err_report, jiffies + 300*HZ); /* 5 minutes */
