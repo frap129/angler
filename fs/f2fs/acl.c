@@ -233,8 +233,6 @@ static int f2fs_set_acl(struct inode *inode, int type,
 			if (error)
 				return error;
 			set_acl_inode(inode, inode->i_mode);
-			if (error == 0)
-				acl = NULL;
 		}
 		break;
 
