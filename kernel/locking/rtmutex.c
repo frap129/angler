@@ -127,9 +127,9 @@ static void fixup_rt_mutex_waiters(struct rt_mutex *lock)
 	 * happens in the middle of the RMW because the waiters bit is
 	 * still set.
 	 */
-	owner = ACCESS_ONCE(*p);
+	owner = READ_ONCE(*p);
 	if (owner & RT_MUTEX_HAS_WAITERS)
-		ACCESS_ONCE(*p) = owner & ~RT_MUTEX_HAS_WAITERS;
+		WRITE_ONCE(*p, owner & ~RT_MUTEX_HAS_WAITERS);
 }
 
 /*
