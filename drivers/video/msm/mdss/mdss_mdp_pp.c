@@ -492,7 +492,6 @@ static struct msm_fb_data_type *mdss_get_mfd_from_index(int index);
 static int pp_num_to_side(struct mdss_mdp_ctl *ctl, u32 num);
 static inline bool pp_sts_is_enabled(u32 sts, int side);
 static inline void pp_sts_set_split_bits(u32 *sts, u32 bits);
-static struct msm_fb_data_type *mdss_get_mfd_from_index(int index);
 
 static u32 last_sts, last_state;
 
