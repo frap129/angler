@@ -430,6 +430,29 @@ static struct ctl_table kern_table[] = {
 		.mode		= 0644,
 		.proc_handler	= sched_hmp_proc_update_handler,
 	},
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+	{
+		.procname	= "sched_use_shadow_scheduling",
+		.data		= &sysctl_sched_use_shadow_scheduling,
+		.maxlen		= sizeof(int),
+		.mode		= 0644,
+		.proc_handler	= sched_hmp_proc_update_handler,
+	},
+	{
+		.procname	= "sched_shadow_upmigrate",
+		.data		= &sysctl_sched_shadow_upmigrate_pct,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= sched_hmp_proc_update_handler,
+	},
+	{
+		.procname	= "sched_shadow_downmigrate",
+		.data		= &sysctl_sched_shadow_downmigrate_pct,
+		.maxlen		= sizeof(unsigned int),
+		.mode		= 0644,
+		.proc_handler	= sched_hmp_proc_update_handler,
+	},
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - end
 	{
 		.procname	= "sched_upmigrate_min_nice",
 		.data		= &sysctl_sched_upmigrate_min_nice,

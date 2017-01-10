@@ -18,6 +18,9 @@
  *
  *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra <pzijlstr@redhat.com>
+ *
+ *  Copyright (C) 2017 Paranoid Android for Nextbit Systems Inc.
+ *
  */
 
 #include <linux/latencytop.h>
@@ -1370,6 +1373,20 @@ unsigned int sysctl_sched_upmigrate_pct = 95; // for msm8992/msm8994
 unsigned int sched_downmigrate;
 unsigned int sysctl_sched_downmigrate_pct = 85; // for msm8992/msm8994
 
+// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+/* Shadow scheduling extension */
+bool __read_mostly sched_use_shadow_scheduling;
+int __read_mostly sysctl_sched_use_shadow_scheduling;
+
+unsigned int __read_mostly sched_shadow_upmigrate;
+unsigned int __read_mostly sysctl_sched_shadow_upmigrate_pct = 50;
+
+unsigned int __read_mostly sched_shadow_downmigrate;
+unsigned int __read_mostly sysctl_sched_shadow_downmigrate_pct = 30;
+
+bool sched_shadow_active;
+// TheCrazyLex@PA Introduce Shadow scheduling extension - end
+
 /*
  * Tasks whose nice value is > sysctl_sched_upmigrate_min_nice are never
  * considered as "big" tasks.
@@ -1437,6 +1454,14 @@ void set_hmp_defaults(void)
 		pct_to_real(sysctl_sched_small_task_pct);
 
 	update_up_down_migrate();
+
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+	sched_shadow_upmigrate =
+		pct_to_real(sysctl_sched_shadow_upmigrate_pct);
+
+	sched_shadow_downmigrate =
+		pct_to_real(sysctl_sched_shadow_downmigrate_pct);
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - end
 
 #ifdef CONFIG_SCHED_FREQ_INPUT
 	sched_heavy_task =
@@ -1568,6 +1593,24 @@ static inline int upmigrate_discouraged(struct task_struct *p)
 
 #endif
 
+// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+static __always_inline int get_shadow_based_sched_upmigrate(void)
+{
+	if (sched_shadow_active)
+		return sched_shadow_upmigrate;
+	else
+		return sched_upmigrate;
+}
+
+static __always_inline int get_shadow_based_sched_downmigrate(void)
+{
+	if (sched_shadow_active)
+		return sched_shadow_downmigrate;
+	else
+		return sched_downmigrate;
+}
+// TheCrazyLex@PA Introduce Shadow scheduling extension - end
+
 /* Is a task "big" on its current cpu */
 static inline int is_big_task(struct task_struct *p)
 {
@@ -1579,7 +1622,7 @@ static inline int is_big_task(struct task_struct *p)
 
 	load = scale_load_to_cpu(load, task_cpu(p));
 
-	return load > sched_upmigrate;
+	return load > get_shadow_based_sched_upmigrate();
 }
 
 /* Is a task "small" on the minimum capacity CPU */
@@ -1711,6 +1754,20 @@ int sched_set_boost(int enable)
 	return ret;
 }
 
+// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+void sched_set_shadow_active(bool active)
+{
+	if (sched_shadow_active != active && sched_use_shadow_scheduling) {
+		/* Force scheduler to reclassify the tasks because the sched_shadow_active state changed */
+		get_online_cpus();
+		pre_big_small_task_count_change(cpu_online_mask);
+		sched_shadow_active = active;
+		post_big_small_task_count_change(cpu_online_mask);
+		put_online_cpus();
+	}
+}
+// TheCrazyLex@PA Introduce Shadow scheduling extension - end
+
 int sched_boost_handler(struct ctl_table *table, int write,
 		void __user *buffer, size_t *lenp,
 		loff_t *ppos)
@@ -1758,9 +1815,9 @@ static int task_load_will_fit(struct task_struct *p, u64 task_load, int cpu)
 		if (nice > sched_upmigrate_min_nice || upmigrate_discouraged(p))
 			return 1;
 
-		upmigrate = sched_upmigrate;
+		upmigrate = get_shadow_based_sched_upmigrate();
 		if (cpu_capacity(prev_cpu) > cpu_capacity(cpu))
-			upmigrate = sched_downmigrate;
+			upmigrate = get_shadow_based_sched_downmigrate();
 
 		if (task_load < upmigrate)
 			return 1;
@@ -2787,6 +2844,7 @@ int sched_hmp_proc_update_handler(struct ctl_table *table, int write,
 	unsigned int old_val;
 	unsigned int *data = (unsigned int *)table->data;
 	int update_min_nice = 0;
+	bool force_reclassify = false;
 
 	mutex_lock(&policy_mutex);
 
@@ -2799,6 +2857,23 @@ int sched_hmp_proc_update_handler(struct ctl_table *table, int write,
 
 	if (write && (old_val == *data))
 		goto done;
+
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+	if (data == (unsigned int *)&sysctl_sched_use_shadow_scheduling) {
+		if (sysctl_sched_use_shadow_scheduling > 0) {
+			sched_use_shadow_scheduling = true;
+			/* Avoid values bigger than one to show up
+			   in the sysfs node */
+			sysctl_sched_use_shadow_scheduling = 1;
+		} else {
+			/* Also handle the case of shadow being active
+			   in this moment */
+			sched_set_shadow_active(false);
+			sched_use_shadow_scheduling = false;
+		}
+		goto done;
+	}
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - end
 
 	if (data == &sysctl_sched_min_runtime) {
 		sched_min_runtime = ((u64) sysctl_sched_min_runtime) * 1000;
@@ -2832,12 +2907,43 @@ int sched_hmp_proc_update_handler(struct ctl_table *table, int write,
 		update_min_nice = 1;
 	} else {
 		/* all tunables other than min_nice are in percentage */
-		if (sysctl_sched_downmigrate_pct >
-		    sysctl_sched_upmigrate_pct || *data > 100) {
+		if ((sysctl_sched_downmigrate_pct >
+		    sysctl_sched_upmigrate_pct)
+		     || (sysctl_sched_shadow_downmigrate_pct >
+			sysctl_sched_shadow_upmigrate_pct)
+		     || *data > 100) {
 			*data = old_val;
 			ret = -EINVAL;
 			goto done;
 		}
+	}
+
+	// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+	/* Evaluate whether we need to force a reclassification
+	   of tasks based on sched_shadow_active */
+
+	/* If sched_upmigrate_min_nice changed we need a
+	   reclassification regardless of shadow. */
+	if (update_min_nice)
+		force_reclassify = true;
+
+	/* If sched_small_task changed we need a
+	   reclassification regardless of shadow. */
+	if (data == &sysctl_sched_small_task_pct)
+		force_reclassify = true;
+
+	/* If shadow is active only force a reclassification
+	   for shadow values and if shadow is inactive only
+	   force a reclassification for non-shadow values.
+	   This is safe since the handler of shadow activity
+	   takes care of a possible reclassification when shadow
+	   activity changes. */
+	if (sched_shadow_active) {
+		if (data == &sysctl_sched_shadow_upmigrate_pct)
+			force_reclassify = true;
+	} else {
+		if (data == &sysctl_sched_upmigrate_pct)
+			force_reclassify = true;
 	}
 
 	/*
@@ -2848,19 +2954,18 @@ int sched_hmp_proc_update_handler(struct ctl_table *table, int write,
 	 * includes taking runqueue lock of all online cpus and re-initiatizing
 	 * their big/small counter values based on changed criteria.
 	 */
-	if ((data == &sysctl_sched_upmigrate_pct ||
-	     data == &sysctl_sched_small_task_pct || update_min_nice)) {
+	if (force_reclassify) {
 		get_online_cpus();
 		pre_big_small_task_count_change(cpu_online_mask);
 	}
 
 	set_hmp_defaults();
 
-	if ((data == &sysctl_sched_upmigrate_pct ||
-	     data == &sysctl_sched_small_task_pct || update_min_nice)) {
+	if (force_reclassify) {
 		post_big_small_task_count_change(cpu_online_mask);
 		put_online_cpus();
 	}
+// TheCrazyLex@PA Introduce Shadow scheduling extension - end
 
 done:
 	mutex_unlock(&policy_mutex);

@@ -918,6 +918,12 @@ extern unsigned int sched_mostly_idle_load;
 extern unsigned int sched_small_task;
 extern unsigned int sched_upmigrate;
 extern unsigned int sched_downmigrate;
+// TheCrazyLex@PA Introduce Shadow scheduling extension - start
+extern bool sched_use_shadow_scheduling;
+extern bool sched_shadow_active;
+extern unsigned int sched_shadow_upmigrate;
+extern unsigned int sched_shadow_downmigrate;
+// TheCrazyLex@PA Introduce Shadow scheduling extension - end
 extern unsigned int sched_init_task_load_pelt;
 extern unsigned int sched_init_task_load_windows;
 extern unsigned int sched_heavy_task;
