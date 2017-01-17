@@ -41,8 +41,8 @@ on property:sys.boot_completed=1
     chmod 0664 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq_hardlimit 1958400
 
-    # Tune Chill: Allow for rapid freq increases on LITTLE to require less use of big cores
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor chill
+    # Tune Governors: Relaxed on LITTLE, Chill on big
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor relaxed
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 302400
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1708000
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor chill
@@ -53,18 +53,22 @@ on property:sys.boot_completed=1
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 40
     write /sys/module/msm_performance/parameters/touchboost 0
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/chill/boost_count
-    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/chill/boost_count
-    write /sys/devices/system/cpu/cpu0/cpufreq/chill/boost_count 5
-    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/chill/boost_count
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count
+    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count 5
+    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling
+    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count 8
+    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling
     chown system system /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count
     chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count 10
     chmod 0444 /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/chill/freq_step
-    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/chill/freq_step
-    write /sys/devices/system/cpu/cpu0/cpufreq/chill/freq_step 6
-    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/chill/freq_step
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step
+    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step 6
+    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step
     chown system system /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step
     chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step 4
@@ -77,10 +81,10 @@ on property:sys.boot_completed=1
     chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspened
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 70 
     chmod 0444 /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspened
-    chown system system /sys/devices/system/cpu/cpu0/cpufreq/chill/up_threshold
-    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/chill/up_threshold
-    write /sys/devices/system/cpu/cpu0/cpufreq/chill/up_threshold 70
-    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/chill/up_threshold
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold
+    chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 70
+    chmod 0444 /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold
     chown system system /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold
     chmod 0644 /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
