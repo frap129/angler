@@ -379,11 +379,6 @@ static const unsigned int max98925_spk_tlv[] = {
 	1, 31, TLV_DB_SCALE_ITEM(-600, 100, 0),
 };
 
-void update_speakers_gain(int vol_boost)
-{
-	speaker_gain = DEFAULT_SPEAKER_GAIN + vol_boost;
-}
-
 static int max98925_left_gain_get(struct snd_kcontrol *kcontrol,
 				struct snd_ctl_elem_value *ucontrol)
 {
