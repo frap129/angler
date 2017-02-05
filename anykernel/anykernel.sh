@@ -3,7 +3,7 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.rel=7
+kernel.rel=8
 do.devicecheck=1
 do.initd=1
 do.modules=0
