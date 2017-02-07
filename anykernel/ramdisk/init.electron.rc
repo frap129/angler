@@ -49,7 +49,7 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 633600
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1958400
     write /sys/module/cpu_boost/parameters/input_boost_enabled 1
-    write /sys/module/cpu_boost/parameters/input_boost_freq 0:600000 1:600000 2:600000 3:0 4:0 5:0 6:0 7:0
+    write /sys/module/cpu_boost/parameters/input_boost_freq 0:0 1:0 2:0 3:960000 4:0 5:0 6:0 7:0
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 40
     write /sys/module/cpu_boost/parameters/migration_load_threshold 15
