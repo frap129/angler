@@ -2,8 +2,6 @@
  *
  * Copyright (C) 2002  David Howells (dhowells@redhat.com)
  * - Incorporating suggestions made by Linus Torvalds
- *
- * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
  */
 
 #ifndef _LINUX_THREAD_INFO_H
@@ -11,7 +9,6 @@
 
 #include <linux/types.h>
 #include <linux/bug.h>
-#include <asm/relaxed.h>
 
 struct timespec;
 struct compat_timespec;
@@ -91,12 +88,6 @@ static inline int test_and_clear_ti_thread_flag(struct thread_info *ti, int flag
 	return test_and_clear_bit(flag, (unsigned long *)&ti->flags);
 }
 
-static inline int test_ti_thread_flag_relaxed(struct thread_info *ti, int flag)
-{
-	ti->flags = cpu_relaxed_read_long(&ti->flags);
-	return test_bit(flag, (unsigned long *)&ti->flags);
-}
-
 static inline int test_ti_thread_flag(struct thread_info *ti, int flag)
 {
 	return test_bit(flag, (unsigned long *)&ti->flags);
@@ -112,15 +103,11 @@ static inline int test_ti_thread_flag(struct thread_info *ti, int flag)
 	test_and_clear_ti_thread_flag(current_thread_info(), flag)
 #define test_thread_flag(flag) \
 	test_ti_thread_flag(current_thread_info(), flag)
-#define test_thread_flag_relaxed(flag) \
-	test_ti_thread_flag_relaxed(current_thread_info(), flag)
 
 #define set_need_resched()	set_thread_flag(TIF_NEED_RESCHED)
 #define clear_need_resched()	clear_thread_flag(TIF_NEED_RESCHED)
 
 #define tif_need_resched() test_thread_flag(TIF_NEED_RESCHED)
-
-#define tif_need_resched_relaxed() test_thread_flag_relaxed(TIF_NEED_RESCHED)
 
 #if defined TIF_RESTORE_SIGMASK && !defined HAVE_SET_RESTORE_SIGMASK
 /*
