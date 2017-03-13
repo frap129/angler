@@ -32,7 +32,7 @@
 
 #define USB_THRESHOLD 512
 #define USB_BAM_MAX_STR_LEN 50
-#define USB_BAM_TIMEOUT (10*HZ)
+#define USB_BAM_TIMEOUT 10000
 
 #define USB_BAM_NR_PORTS	4
 
@@ -1667,8 +1667,8 @@ static void wait_for_prod_granted(enum usb_ctrl cur_bam)
 	} else if (ret == -EINPROGRESS) {
 		pr_debug("%s: Waiting for PROD_GRANTED\n", __func__);
 		if (!wait_for_completion_timeout(&info[cur_bam].prod_avail,
-			USB_BAM_TIMEOUT))
-			pr_err("%s: Timeout wainting for PROD_GRANTED\n",
+			msecs_to_jiffies(USB_BAM_TIMEOUT)))
+                        pr_err("%s: Timeout wainting for PROD_GRANTED\n",
 				__func__);
 	} else
 		pr_err("%s: ipa_rm_request_resource ret =%d\n", __func__, ret);
@@ -1711,8 +1711,8 @@ static void wait_for_prod_release(enum usb_ctrl cur_bam)
 	} else if (ret == -EINPROGRESS) {
 		pr_debug("%s: Waiting for PROD_RELEASED\n", __func__);
 		if (!wait_for_completion_timeout(&info[cur_bam].prod_released,
-						USB_BAM_TIMEOUT))
-			pr_err("%s: Timeout waiting for PROD_RELEASED\n",
+					msecs_to_jiffies(USB_BAM_TIMEOUT)))
+                        pr_err("%s: Timeout waiting for PROD_RELEASED\n",
 			__func__);
 	} else
 		pr_err("%s: ipa_rm_request_resource ret =%d", __func__, ret);
