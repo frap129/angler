@@ -2,6 +2,12 @@
 # Ramdisk file for profile based kernel management
 # Implimentation inspired by Franco's fku profiles
 
+# Initialization
+on property:sys.boot_completed=1
+   # Set default profile on first boot
+   exec u:r:init:s0 root root -- /init.profiles.sh
+   exec u:r:su:s0 root root -- /init.profiles.sh
+
 # Balance (default profile)
 on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor relaxed
