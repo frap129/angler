@@ -119,41 +119,64 @@ MODULE_PARM_DESC(high_perf_mode, "enable/disable class AB config for hph");
  */
 
 
-//PDesireAudio Version: 10.0 Yandere Audio
+//PDesireAudio Version: 10.1 Yandere Audio
 static int uhqa_mode_pdesireaudio = 1;
 module_param(uhqa_mode_pdesireaudio, int,
 			S_IRUGO | S_IWUSR | S_IWGRP);
 MODULE_PARM_DESC(uhqa_mode_pdesireaudio, "PDesireAudio UHQA Audio output switch");
 
+static int pdesireaudio_static_mode;
+module_param(pdesireaudio_static_mode, int,
+			S_IRUGO | S_IWUSR | S_IWGRP);
+MODULE_PARM_DESC(pdesireaudio_static_mode, "Set PDesireAudio to static mode, so User can just control via kernelspace without changes due dynamic changes");
+
+
 void pdesireaudio_start(void) 
 {
-	printk("Enable PDesireAudio");
-	uhqa_mode_pdesireaudio = 1;
+	if (!pdesireaudio_static_mode){
+		printk("Enable PDesireAudio");
+		uhqa_mode_pdesireaudio = 1;
+	}
 }
 
 void pdesireaudio_remove(void) 
 {
-	printk("Disable PDesireAudio");
-	uhqa_mode_pdesireaudio = 0;
+	if (!pdesireaudio_static_mode){
+		printk("Disable PDesireAudio");
+		uhqa_mode_pdesireaudio = 0;
+	}
 } 
 
 void pdesireaudio_init(void) 
 {
-	bool active;
-	
+	if (!pdesireaudio_static_mode){
+		bool active;
 
-	printk("Re-Init PDesireAudio");
-	if (!uhqa_mode_pdesireaudio)
-		active = false;
-	else 
-		active = true;
+
+		printk("Re-Init PDesireAudio");
+		if (!uhqa_mode_pdesireaudio)
+			active = false;
+		else
+			active = true;
+
+
+		pdesireaudio_remove();
+
+		if (active == true)
+			pdesireaudio_start();
 	
-	
-	pdesireaudio_remove();
-	
-	if (active == true)
-		pdesireaudio_start();
-	
+	}
+}
+
+void pdesireaudio_api_static_mode_control(bool enable)
+{
+	if(enable == true) {
+		printk("Set PDesireAudio to static mode");
+		pdesireaudio_static_mode = 1;
+	} else {
+		printk("Set PDesireAudio to dynamic mode");
+		pdesireaudio_static_mode = 0;
+	}
 }
 
 static struct afe_param_slimbus_slave_port_cfg tomtom_slimbus_slave_port_cfg = {
@@ -1235,9 +1258,11 @@ static int tomtom_config_compander(struct snd_soc_dapm_widget *w,
 	pr_debug("%s: %s event %d compander %d, enabled %d", __func__,
 		 w->name, event, comp, tomtom->comp_enabled[comp]);
 
-	/* Compander 0 has two channels */
-	mask = enable_mask = 0x03;
-	buck_mv = tomtom_codec_get_buck_mv(codec);
+	if (!uhqa_mode_pdesireaudio) {
+		/* Compander 0 has two channels */
+		mask = enable_mask = 0x03;
+		buck_mv = tomtom_codec_get_buck_mv(codec);
+	}
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
