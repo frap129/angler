@@ -1739,15 +1739,17 @@ static void qpnp_hap_td_enable(struct timed_output_dev *dev, int value)
 				 hap->timeout_ms : value);
 
 		hap->state = 1;
-		hrtimer_start(&hap->hap_timer,
-			      ktime_set(value / 1000, (value % 1000) * 1000000),
-			      HRTIMER_MODE_REL);
 	}
 	mutex_unlock(&hap->lock);
 	if (hap->play_mode == QPNP_HAP_DIRECT)
 		qpnp_hap_set(hap, hap->state);
 	else
 		schedule_work(&hap->work);
+
+	if (value)
+		hrtimer_start(&hap->hap_timer,
+			ktime_set(value / 1000, (value % 1000) * 1000000),
+			HRTIMER_MODE_REL);
 }
 
 /* play pwm bytes */
