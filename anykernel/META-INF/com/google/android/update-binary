@@ -82,6 +82,10 @@ if [ $? != "0" ]; then
   abort;
 fi;
 
+ui_print " ";
+ui_print "Setting default profile...";
+  echo 0 > /data/property/persist.spectrum.profile;
+
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
   ui_print " ";
   ui_print "Pushing modules...";
