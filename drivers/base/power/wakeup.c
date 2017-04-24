@@ -15,7 +15,6 @@
 #include <linux/seq_file.h>
 #include <linux/debugfs.h>
 #include <linux/types.h>
-#include <linux/display_state.h>
 #include <trace/events/power.h>
 #include <linux/moduleparam.h>
 
@@ -31,6 +30,10 @@ static bool enable_bluedroid_timer_ws = true;
 module_param(enable_bluedroid_timer_ws, bool, 0644);
 static bool enable_ipa_ws = true;
 module_param(enable_ipa_ws, bool, 0644);
+static bool enable_qcom_rx_wakelock_ws = true;
+module_param(enable_qcom_rx_wakelock_ws, bool, 0644);
+static bool enable_msm_hsic_ws = true;
+module_param(enable_msm_hsic_ws, bool, 0644);
 static bool enable_timerfd_ws = true;
 module_param(enable_timerfd_ws, bool, 0644);
 static bool enable_netlink_ws = true;
@@ -367,10 +370,16 @@ int device_init_wakeup(struct device *dev, bool enable)
 {
 	int ret = 0;
 
+	if (!dev)
+		return -EINVAL;
+
 	if (enable) {
 		device_set_wakeup_capable(dev, true);
 		ret = device_wakeup_enable(dev);
 	} else {
+		if (dev->power.can_wakeup)
+			device_wakeup_disable(dev);
+
 		device_set_wakeup_capable(dev, false);
 	}
 
@@ -472,6 +481,41 @@ static bool wakeup_source_not_registered(struct wakeup_source *ws)
 		   ws->timer.data != (unsigned long)ws;
 }
 
+static bool wakeup_source_blocker(struct wakeup_source *ws)
+{
+	unsigned int wslen = 0;
+
+	if (ws) {
+		wslen = strlen(ws->name);
+
+		if ((!enable_ipa_ws && !strncmp(ws->name, "IPA_WS", wslen)) ||
+			(!enable_msm_hsic_ws &&
+				!strncmp(ws->name, "msm_hsic_host", wslen)) ||
+			(!enable_wlan_rx_wake_ws &&
+				!strncmp(ws->name, "wlan_rx_wake", wslen)) ||
+			(!enable_wlan_ctrl_wake_ws &&
+				!strncmp(ws->name, "wlan_ctrl_wake", wslen)) ||
+			(!enable_wlan_wake_ws &&
+				!strncmp(ws->name, "wlan_wake", wslen)) ||
+			(!enable_bluedroid_timer_ws &&
+				!strncmp(ws->name, "bluedroid_timer", wslen)) ||
+			(!enable_timerfd_ws &&
+				!strncmp(ws->name, "[timerfd]", wslen)) ||
+			(!enable_netlink_ws &&
+				!strncmp(ws->name, "NETLINK", wslen))) {
+			if (ws->active) {
+				wakeup_source_deactivate(ws);
+				pr_info("forcefully deactivate wakeup source: %s\n",
+					ws->name);
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 /*
  * The functions below use the observation that each wakeup event starts a
  * period in which the system should not be suspended.  The moment this period
@@ -511,35 +555,6 @@ static bool wakeup_source_not_registered(struct wakeup_source *ws)
 static void wakeup_source_activate(struct wakeup_source *ws)
 {
 	unsigned int cec;
-
-	if (((!enable_wlan_rx_wake_ws &&
-			!strncmp(ws->name, "wlan_rx_wake", 12)) ||
-		(!enable_msm_hsic_ws &&
-			!strncmp(ws->name, "msm_hsic_host", 13)) ||
-		(!enable_wlan_ctrl_wake_ws &&
-			!strncmp(ws->name, "wlan_ctrl_wake", 14)) ||
-		(!enable_wlan_wake_ws &&
-			!strncmp(ws->name, "wlan_wake", 9)) ||
-		(!enable_bluedroid_timer_ws &&
-			!strncmp(ws->name, "bluedroid_timer", 15)) ||
-		(!enable_ipa_ws &&
-			!strncmp(ws->name, "IPA_WS", 6)) ||
-		(!enable_qcom_rx_wakelock_ws &&
-			!strncmp(ws->name, "qcom_rx_wakelock", 16)))) {
-		/*
-		 * let's try and deactivate this wakeup source since the user
-		 * clearly doesn't want it. The user is responsible for any
-		 * adverse effects and has been warned about it
-		 */
-		if (ws->active)
-			wakeup_source_deactivate(ws);
-
-		return;
-	}
-
-	if (WARN(wakeup_source_not_registered(ws),
-			"unregistered wakeup source\n"))
-		return;
 
 	/*
 	 * active wakeup source should bring the system
@@ -761,7 +776,7 @@ void pm_get_active_wakeup_sources(char *pending_wakeup_source, size_t max)
 
 	rcu_read_lock();
 	list_for_each_entry_rcu(ws, &wakeup_sources, entry) {
-		if (ws->active) {
+		if (ws->active && len < max) {
 			if (!active)
 				len += scnprintf(pending_wakeup_source, max,
 						"Pending Wakeup Sources: ");
@@ -985,7 +1000,7 @@ static int print_wakeup_source_stats(struct seq_file *m,
 		active_time = ktime_set(0, 0);
 	}
 
-	ret = seq_printf(m, "%-32s\t%lu\t\t%lu\t\t%lu\t\t%lu\t\t"
+	ret = seq_printf(m, "%-12s\t%lu\t\t%lu\t\t%lu\t\t%lu\t\t"
 			"%lld\t\t%lld\t\t%lld\t\t%lld\t\t%lld\n",
 			ws->name, active_count, ws->event_count,
 			ws->wakeup_count, ws->expire_count,
@@ -1006,7 +1021,7 @@ static int wakeup_sources_stats_show(struct seq_file *m, void *unused)
 {
 	struct wakeup_source *ws;
 
-	seq_puts(m, "name\t\t\t\t\tactive_count\tevent_count\twakeup_count\t"
+	seq_puts(m, "name\t\tactive_count\tevent_count\twakeup_count\t"
 		"expire_count\tactive_since\ttotal_time\tmax_time\t"
 		"last_change\tprevent_suspend_time\n");
 
