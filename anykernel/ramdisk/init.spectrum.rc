@@ -31,9 +31,9 @@ on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step 6
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step 4
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold 60
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85 
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold 75
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99 
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 70
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
     write /sys/class/leds/lcd-backlight/max_brightness 255
@@ -107,9 +107,9 @@ on property:persist.spectrum.profile=2
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step 6
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step 4
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold 70
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85 
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold 75
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99 
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 75
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor powersave
