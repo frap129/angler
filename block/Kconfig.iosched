@@ -4,7 +4,7 @@ menu "IO Schedulers"
 
 config IOSCHED_NOOP
 	bool
-	default y
+	default n
 	---help---
 	  The no-op I/O scheduler is a minimal scheduler that does basic merging
 	  and sorting. Its main uses include non-disk based block devices like
@@ -113,7 +113,7 @@ choice
 		bool "Maple" if IOSCHED_MAPLE=y
 
 	config DEFAULT_NOOP
-		bool "No-op"
+		bool "No-op" if IOSCHED_NOOP=y
 
 endchoice
 
