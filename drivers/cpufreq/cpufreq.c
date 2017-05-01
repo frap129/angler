@@ -1058,45 +1058,32 @@ static int cpufreq_add_dev_interface(struct cpufreq_policy *policy,
 	struct freq_attr **drv_attr;
 	int ret = 0;
 
-	/* prepare interface data */
-	ret = kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
-				   &dev->kobj, "cpufreq");
-	if (ret)
-		return ret;
-
 	/* set up files for this cpu device */
 	drv_attr = cpufreq_driver->attr;
 	while ((drv_attr) && (*drv_attr)) {
 		ret = sysfs_create_file(&policy->kobj, &((*drv_attr)->attr));
 		if (ret)
-			goto err_out_kobj_put;
+			return ret;
 		drv_attr++;
 	}
 	if (cpufreq_driver->get) {
 		ret = sysfs_create_file(&policy->kobj, &cpuinfo_cur_freq.attr);
 		if (ret)
-			goto err_out_kobj_put;
+			return ret;
 	}
 
 	ret = sysfs_create_file(&policy->kobj, &scaling_cur_freq.attr);
 	if (ret)
-		goto err_out_kobj_put;
+		return ret;
 
 	if (cpufreq_driver->bios_limit) {
 		ret = sysfs_create_file(&policy->kobj, &bios_limit.attr);
 		if (ret)
-			goto err_out_kobj_put;
+			return ret;
 	}
 
 	ret = cpufreq_add_dev_symlink(policy);
-	if (ret)
-		goto err_out_kobj_put;
 
-	return ret;
-
-err_out_kobj_put:
-	kobject_put(&policy->kobj);
-	wait_for_completion(&policy->kobj_unregister);
 	return ret;
 }
 
@@ -1174,7 +1161,7 @@ static struct cpufreq_policy *cpufreq_policy_restore(unsigned int cpu)
 	return policy;
 }
 
-static struct cpufreq_policy *cpufreq_policy_alloc(void)
+static struct cpufreq_policy *cpufreq_policy_alloc(struct device *dev)
 {
 	struct cpufreq_policy *policy;
 
@@ -1188,11 +1175,18 @@ static struct cpufreq_policy *cpufreq_policy_alloc(void)
 	if (!zalloc_cpumask_var(&policy->related_cpus, GFP_KERNEL))
 		goto err_free_cpumask;
 
+	/* prepare interface data */
+	if (kobject_init_and_add(&policy->kobj, &ktype_cpufreq,
+				   &dev->kobj, "cpufreq"))
+		goto err_free_rcpumask;
+
 	INIT_LIST_HEAD(&policy->policy_list);
 	init_rwsem(&policy->rwsem);
 
 	return policy;
 
+err_free_rcpumask:
+	free_cpumask_var(policy->related_cpus);
 err_free_cpumask:
 	free_cpumask_var(policy->cpus);
 err_free_policy:
@@ -1300,7 +1294,7 @@ static int __cpufreq_add_dev(struct device *dev, struct subsys_interface *sif,
 	policy = frozen ? cpufreq_policy_restore(cpu) : NULL;
 	if (!policy) {
 		frozen = false;
-		policy = cpufreq_policy_alloc();
+		policy = cpufreq_policy_alloc(dev);
 		if (!policy)
 			goto nomem_out;
 	}
@@ -1416,11 +1410,9 @@ err_get_freq:
 	if (cpufreq_driver->exit)
 		cpufreq_driver->exit(policy);
 err_set_policy_cpu:
-	if (frozen) {
-		/* Do not leave stale fallback data behind. */
-		per_cpu(cpufreq_cpu_data_fallback, cpu) = NULL;
-		cpufreq_policy_put_kobj(policy);
-	}
+	/* Do not leave stale fallback data behind. */
+	per_cpu(cpufreq_cpu_data_fallback, cpu) = NULL;
+	cpufreq_policy_put_kobj(policy);
 	cpufreq_policy_free(policy);
 
 nomem_out:
@@ -2277,7 +2269,8 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 		if (policy->max > max_freq_hardlimit[map_core_to_cluster(policy->cpu)])
 			policy->max = max_freq_hardlimit[map_core_to_cluster(policy->cpu)];
 
-	if (new_policy->min > policy->user_policy.max || new_policy->max < policy->user_policy.min)
+	if (new_policy->min > policy->user_policy.max
+	    || new_policy->max < policy->user_policy.min)
 		return -EINVAL;
 
 	/* verify the cpu speed can be set within this limit */
