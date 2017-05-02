@@ -19,9 +19,9 @@
 #include <linux/fsync.h>
 #include "internal.h"
 
-bool fsync_enabled = true;
+bool fsync_enabled = false;
 module_param(fsync_enabled, bool, 0644);
-bool fsync_enabled_on_input_boost = true;
+bool fsync_enabled_on_input_boost = false;
 module_param(fsync_enabled_on_input_boost, bool, 0644);
 
 void set_fsync(bool enable)
