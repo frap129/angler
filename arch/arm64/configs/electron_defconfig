@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 3.10.105-Election-v Kernel Configuration
+# Linux/arm64 3.10.105-Election- Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -2470,6 +2470,7 @@ CONFIG_SND_SOC_WCD9XXX=y
 CONFIG_SND_SOC_WCD_CPE=y
 CONFIG_SND_SOC_MSM_STUB=y
 CONFIG_SND_SOC_MSM_HDMI_CODEC_RX=y
+CONFIG_SOUND_CONTROL_HAX_3_GPL=y
 # CONFIG_SND_SIMPLE_CARD is not set
 # CONFIG_SOUND_PRIME is not set
 
