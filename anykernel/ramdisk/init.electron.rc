@@ -68,3 +68,9 @@ on property:sys.boot_completed=1
 
     # Enable PDesireAudio
     write /sys/modules/snd_soc_wcd9330/uhqa_mode_pdesireaudio 1
+
+    # Configure IntelliThermal
+    write /sys/modules/msm_thermal/core_control/enabled 0
+    write /sys/modules/msm_thermal/parameters/enabled 1
+    write /sys/modules/msm_thermal/parameters/limit_temp_degC 64
+    write /sys/modules/msm_thermal/parameters/poll_ms 3
