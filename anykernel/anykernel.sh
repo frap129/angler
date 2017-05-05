@@ -3,7 +3,7 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.rel=10-rc2
+kernel.rel=v10-ramdisk
 do.devicecheck=1
 do.initd=1
 do.modules=0

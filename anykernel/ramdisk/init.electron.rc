@@ -13,13 +13,18 @@ on property:sys.boot_completed=1
     write /sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled 1
     write /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled 1
 
-    # Disable some Wlan wakelocks
+    # Disable some wakelocks
     write /sys/module/wakeup/parameters/enable_wlan_rx_wake_ws 0
     write /sys/module/wakeup/parameters/enable_wlan_ctrl_wake_ws 0
     write /sys/module/wakeup/parameters/enable_wlan_wake_ws 0
+    write /sys/module/wakeup/parameters/enable_msm_hsic_ws 0
+    write /sys/module/wakeup/parameters/enable_qcom_rx_wakelock_ws 0
+    write /sys/module/wakeup/parameters/enable_netlink_ws 0
+    write /sys/module/wakeup/parameters/enable_ipa_ws 0
 
     # Start Power tweaks
     exec u:r:init:s0 root root -- /init.special_power.sh
+    exec u:r:su:s0 root root -- /init.special_power.sh
 
     # Initialize frequency hardlimits
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq_hardlimit
