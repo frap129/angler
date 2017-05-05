@@ -42,7 +42,7 @@ on property:persist.spectrum.profile=0
     write /dev/cpuset/foreground/cpus 0-2,4-7
     write /dev/cpuset/foreground/boost/cpus 4-7
     write /dev/cpuset/top-app/cpus 0-7
-    write /sys/module/lazyplug/parameters/nr_possible_cores 8
+    write /sys/module/lazyplug/parameters/lazy_max_cores 8
 
 # Performance (based on DrunkSauce Lite)
 on property:persist.spectrum.profile=1
@@ -84,7 +84,7 @@ on property:persist.spectrum.profile=1
     write /dev/cpuset/foreground/cpus 0-2,4-7
     write /dev/cpuset/foreground/boost/cpus 4-7
     write /dev/cpuset/top-app/cpus 0-7
-    write /sys/module/lazyplug/parameters/nr_possible_cores 8
+    write /sys/module/lazyplug/parameters/lazy_max_cores 8
 
 # Battery
 on property:persist.spectrum.profile=2
@@ -117,7 +117,7 @@ on property:persist.spectrum.profile=2
     write /dev/cpuset/foreground/cpus 0-2,4-5
     write /dev/cpuset/foreground/boost/cpus 4-5
     write /dev/cpuset/top-app/cpus 0-5
-    write /sys/module/lazyplug/parameters/nr_possible_cores 6
+    write /sys/module/lazyplug/parameters/lazy_max_cores 6
 
 # Gaming
 on property:persist.spectrum.profile=3
@@ -159,4 +159,4 @@ on property:persist.spectrum.profile=3
     write /dev/cpuset/foreground/cpus 0-2,4-7
     write /dev/cpuset/foreground/boost/cpus 4-7
     write /dev/cpuset/top-app/cpus 0-7
-    write /sys/module/lazyplug/parameters/nr_possible_cores 8
+    write /sys/module/lazyplug/parameters/lazy_max_cores 8

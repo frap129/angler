@@ -73,8 +73,8 @@
 //#define DEBUG_LAZYPLUG
 #undef DEBUG_LAZYPLUG
 
-#define LAZYPLUG_MAJOR_VERSION	1
-#define LAZYPLUG_MINOR_VERSION	12
+#define LAZYPLUG_MAJOR_VERSION	2
+#define LAZYPLUG_MINOR_VERSION	0
 
 #define DEF_SAMPLING_MS			(268)
 #define DEF_IDLE_COUNT			(19) /* 268 * 19 = 5092, almost equals to 5 seconds */
@@ -114,7 +114,8 @@ static DEFINE_PER_CPU(struct ip_cpu_info, ip_info);
 
 #define CAPACITY_RESERVE	50
 
-#if defined(CONFIG_ARCH_MSM8994) || defined(CONFIG_ARCH_MSM_8996)
+#if defined(CONFIG_ARCH_MSM8994) || defined(CONFIG_ARCH_MSM_8996) || \
+defined(CONFIG_ARCH_MSM8992)
 #define THREAD_CAPACITY (520 - CAPACITY_RESERVE)
 #elif defined(CONFIG_ARCH_APQ8084) || defined(CONFIG_ARM64)
 #define THREAD_CAPACITY (430 - CAPACITY_RESERVE)
@@ -188,13 +189,19 @@ static unsigned int __read_mostly *nr_run_profiles[] = {
 
 #define NR_RUN_ECO_MODE_PROFILE	3
 #define NR_RUN_HYSTERESIS_OCTA	16
+#define NR_RUN_HYSTERESIS_HEXA	12
 #define NR_RUN_HYSTERESIS_QUAD	8
 #define NR_RUN_HYSTERESIS_DUAL	4
 
 #define CPU_NR_THRESHOLD	((THREAD_CAPACITY << 1) + (THREAD_CAPACITY / 2))
 
 static unsigned int __read_mostly nr_possible_cores;
-module_param(nr_possible_cores, uint, 0644);
+
+static unsigned int __read_mostly lazy_max_cores;
+module_param(lazy_max_cores, uint, 0664);
+
+static unsigned int __read_mostly lazy_min_cores;
+module_param(lazy_min_cores, uint, 0664);
 
 static unsigned int __read_mostly cpu_nr_run_threshold = CPU_NR_THRESHOLD;
 module_param(cpu_nr_run_threshold, uint, 0664);
@@ -220,17 +227,28 @@ static unsigned int idle_count = 0;
 extern unsigned long avg_nr_running(void);
 extern unsigned long avg_cpu_nr_running(unsigned int cpu);
 
+/* Iterate every cpu id within max and min parameters */
+#define for_each_lazy_cpu_up(cpu) \
+	for ((cpu) = -1;					\
+		(cpu) = cpumask_next_zero((cpu), cpu_possible_mask),\
+		(cpu) < lazy_max_cores && (cpu) > lazy_min_cores;)
+
+#define for_each_lazy_cpu_down(cpu) \
+	for ((cpu) = -1;					\
+		(cpu) = cpumask_next_zero((cpu), cpu_possible_mask),\
+		(cpu) > lazy_min_cores;)
+
 static void __ref cpu_all_ctrl(bool online) {
 	unsigned int cpu;
 
 	if (online) {
-		for_each_possible_cpu(cpu) {
+		for_each_lazy_cpu_up(cpu) {
 			if (cpu_online(cpu))
 				continue;
 			cpu_up(cpu);
 		}
 	} else {
-		for_each_possible_cpu(cpu) {
+		for_each_lazy_cpu_down(cpu) {
 			if (!cpu_online(cpu) || cpu == 0)
 				continue;
 			cpu_down(cpu);
@@ -319,7 +337,7 @@ static void unplug_cpu(int min_active_cpu)
 	struct ip_cpu_info *l_ip_info;
 	int l_nr_threshold;
 
-	for_each_possible_cpu(cpu) {
+	for_each_lazy_cpu_down(cpu) {
 		l_nr_threshold =
 			cpu_nr_run_threshold << 1 / (num_online_cpus());
 		if (!cpu_online(cpu) || cpu == 0)
@@ -329,6 +347,8 @@ static void unplug_cpu(int min_active_cpu)
 			if (l_ip_info->cpu_nr_running < l_nr_threshold)
 				cpu_down(cpu);
 	}
+	
+
 }
 
 static void lazyplug_work_fn(struct work_struct *work)
@@ -462,15 +482,22 @@ void lazyplug_enter_lazy(bool enter)
 int __init lazyplug_init(void)
 {
 	nr_possible_cores = num_possible_cpus();
+	lazy_max_cores = nr_possible_cores;
+	lazy_min_cores = 1;
 
 	pr_info("lazyplug: version %d.%d by arter97\n"
 		"          based on intelli_plug by faux123\n",
 		 LAZYPLUG_MAJOR_VERSION,
 		 LAZYPLUG_MINOR_VERSION);
 
-	if (nr_possible_cores > 4) {
+	if (nr_possible_cores > 6) {
 		nr_run_hysteresis = NR_RUN_HYSTERESIS_OCTA;
 		nr_run_profile_sel = 0;
+		lazy_min_cores=2;
+	} else if (nr_possible_cores > 4) {
+		nr_run_hysteresis = NR_RUN_HYSTERESIS_HEXA;
+		nr_run_profile_sel = 0;
+		lazy_min_cores=2;
 	} else if (nr_possible_cores > 2) {
 		nr_run_hysteresis = NR_RUN_HYSTERESIS_QUAD;
 		nr_run_profile_sel = 0;
