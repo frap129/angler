@@ -20,10 +20,6 @@ function get-set-forall() {
 
 ################################################################################
 
-# Setting B.L scheduler parameters
-get-set-forall /sys/devices/system/cpu/cpu*/sched_mostly_idle_load 20
-get-set-forall /sys/devices/system/cpu/cpu*/sched_mostly_idle_nr_run 3
-
 # devfreq
 get-set-forall /sys/class/devfreq/qcom,cpubw*/governor bw_hwmon
 restorecon -R /sys/class/devfreq/qcom,cpubw*
@@ -38,4 +34,3 @@ get-set-forall /sys/class/devfreq/qcom,cpubw*/bw_hwmon/guard_band_mbps 0
 get-set-forall /sys/class/devfreq/qcom,cpubw*/bw_hwmon/up_scale 250
 get-set-forall /sys/class/devfreq/qcom,cpubw*/bw_hwmon/idle_mbps 1600
 get-set-forall /sys/class/devfreq/qcom,mincpubw*/governor cpufreq
-
