@@ -420,7 +420,7 @@ static void lazyplug_resume(void)
 
 		schedule_work(&cpu_all_up_work);
 	}
-	queue_delayed_work_on(0, lazyplug_wq, &lazyplug_work,
+	queue_delayed_work(lazyplug_wq, &lazyplug_work,
 		msecs_to_jiffies(10));
 }
 
