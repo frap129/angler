@@ -107,4 +107,5 @@ kernel/x509_certificate_list
 *.save*
 *.old
 out
-anykernel
+anykernel/anykernel.sh
+anykernel/zImage
