@@ -194,37 +194,37 @@ static ssize_t headphone_gain_pa_store(struct kobject *kobj,
 }
 
 static struct kobj_attribute high_performance_mode_attribute =
-	__ATTR(highperf_enabled,
+	__ATTR(gpl_highperf_enabled,
 		0666,
 		hph_perf_show,
 		hph_perf_store);
 
 static struct kobj_attribute cam_mic_gain_attribute =
-	__ATTR(cam_mic_gain,
+	__ATTR(gpl_cam_mic_gain,
 		0666,
 		cam_mic_gain_show,
 		cam_mic_gain_store);
 
 static struct kobj_attribute mic_gain_attribute =
-	__ATTR(mic_gain,
+	__ATTR(gpl_mic_gain,
 		0666,
 		mic_gain_show,
 		mic_gain_store);
 
 static struct kobj_attribute speaker_gain_attribute =
-	__ATTR(speaker_gain,
+	__ATTR(gpl_speaker_gain,
 		0666,
 		speaker_gain_show,
 		speaker_gain_store);
 
 static struct kobj_attribute headphone_gain_attribute =
-	__ATTR(headphone_gain,
+	__ATTR(gpl_headphone_gain,
 		0666,
 		headphone_gain_show,
 		headphone_gain_store);
 
 static struct kobj_attribute headphone_pa_gain_attribute =
-	__ATTR(headphone_pa_gain,
+	__ATTR(gpl_headphone_pa_gain,
 		0666,
 		headphone_gain_pa_show,
 		headphone_gain_pa_store);
@@ -252,7 +252,7 @@ static int sound_control_init(void)
 	int sysfs_result;
 
 	sound_control_kobj =
-		kobject_create_and_add("sound_control", kernel_kobj);
+		kobject_create_and_add("sound_control_3", kernel_kobj);
 
 	if (!sound_control_kobj) {
 		pr_err("%s sound_control_kobj create failed!\n",
