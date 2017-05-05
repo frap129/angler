@@ -65,3 +65,6 @@ on property:sys.boot_completed=1
 
     # Enable Laptop Mode
     write /proc/sys/vm/laptop_mode 1
+
+    # Enable PDesireAudio
+    write /sys/modules/snd_soc_wcd9330/uhqa_mode_pdesireaudio 1
