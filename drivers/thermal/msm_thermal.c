@@ -4738,7 +4738,7 @@ int msm_thermal_init(struct msm_thermal_data *pdata)
 	}
 
 	enabled = 1;
-	polling_enabled = 1;
+	polling_enabled = 0;
 	ret = cpufreq_register_notifier(&msm_thermal_cpufreq_notifier,
 			CPUFREQ_POLICY_NOTIFIER);
 	if (ret)
@@ -6128,6 +6128,9 @@ int __init msm_thermal_late_init(void)
 {
 	if (!msm_thermal_probed)
 		return 0;
+
+	core_control_enabled = 0;
+	hotplug_enabled = 0;
 
 	if (num_possible_cpus() > 1)
 		msm_thermal_add_cc_nodes();
