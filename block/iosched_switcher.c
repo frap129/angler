@@ -75,8 +75,9 @@ static int fb_notifier_callback(struct notifier_block *nb,
 		 * Switch back from noop to the original iosched after a delay
 		 * when the screen is turned on.
 		 */
-		schedule_delayed_work(&restore_prev,
-				msecs_to_jiffies(RESTORE_DELAY_MS));
+		queue_delayed_work(system_power_efficient_wq,
+			&restore_prev,
+			msecs_to_jiffies(RESTORE_DELAY_MS));
 		break;
 	default:
 		/*
