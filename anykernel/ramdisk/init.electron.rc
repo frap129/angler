@@ -74,3 +74,6 @@ on property:sys.boot_completed=1
     write /sys/modules/msm_thermal/parameters/enabled 1
     write /sys/modules/msm_thermal/parameters/limit_temp_degC 64
     write /sys/modules/msm_thermal/parameters/poll_ms 3
+
+    # Don't treat storage as rotational
+    write /sys/block/mmcblk0/queue/rotational 0
