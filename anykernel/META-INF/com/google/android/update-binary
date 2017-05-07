@@ -26,7 +26,6 @@ getprop() { test -e /sbin/getprop && /sbin/getprop $1 || file_getprop /default.p
 abort() { ui_print "$*"; umount /system; umount /data; exit 1; }
 
 show_progress 1.34 4;
-ui_print " ";
 mkdir -p /tmp/anykernel/bin;
 cd /tmp/anykernel;
 unzip -o "$ZIP";
@@ -55,7 +54,6 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.devicecheck)" == 1 ]; then
       match=1;
     fi;
   done;
-  ui_print " ";
   if [ "$match" != 1 ]; then
     abort "Unsupported device. Aborting...";
   fi;
@@ -63,7 +61,6 @@ fi;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.initd)" == 1 ]; then
   ui_print "Creating init.d...";
-  ui_print " ";
   mount -o remount,rw /system;
   mkdir /system/etc/init.d;
   set_perm_recursive 0 0 0755 0755 /system/etc/init.d;
@@ -82,12 +79,7 @@ if [ $? != "0" ]; then
   abort;
 fi;
 
-ui_print " ";
-ui_print "Setting default profile...";
-  echo 0 > /data/property/persist.spectrum.profile;
-
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
-  ui_print " ";
   ui_print "Pushing modules...";
   mount -o remount,rw /system;
   cp -rf /tmp/anykernel/modules/* /system/lib/modules/;
@@ -101,6 +93,5 @@ fi;
 
 umount /system;
 umount /data;
-ui_print " ";
 ui_print "Done!";
 
