@@ -3,9 +3,9 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.rel=v10-fix3
+kernel.rel=v10-flash-ify
 do.devicecheck=1
-do.initd=1
+do.initd=0
 do.modules=0
 do.cleanup=1
 device.name1=angler
@@ -14,7 +14,6 @@ device.name1=angler
 block=/dev/block/platform/soc.0/f9824900.sdhci/by-name/boot;
 
 ## end setup
-
 
 ## AnyKernel methods (DO NOT CHANGE)
 # set up extracted files and directories
@@ -219,14 +218,7 @@ chmod -R 755 $ramdisk
 ## AnyKernel install
 dump_boot;
 # Start ramdisk changes
-backup_file init.angler.rc;
-replace_string init.angler.rc "#    verity_load_state" "    verity_load_state" "#    verity_load_state"
-replace_string init.angler.rc "#    verity_update_state" "    verity_update_state" "#    verity_update_state"
-insert_line init.rc "import /init.electron.rc" after "import /init.trace.rc" "import /init.electron.rc";
-
-# Start fstab changes
-patch_fstab fstab.angler /data ext4 options "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,forceencrypt=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata" "noatime,nosuid,nodev,barrier=1,data=ordered,nomblk_io_submit,noauto_da_alloc,discard,errors=panic wait,check,encryptable=/dev/block/platform/soc.0/f9824900.sdhci/by-name/metadata"
-patch_fstab fstab.angler /system ext4 options "ro,barrier=1" "rw,barrier=1,noatime"
+insert_line init.angler.rc "init.electron.rc" after "import init.angler.sensorhub.rc" "import init.electron.rc";
 
 # Add frandom compatibility
 backup_file ueventd.rc;
@@ -235,6 +227,9 @@ insert_line ueventd.rc "erandom" after "urandom" "/dev/erandom              0666
 backup_file file_contexts;
 insert_line file_contexts "frandom" after "urandom" "/dev/frandom		u:object_r:frandom_device:s0\n";
 insert_line file_contexts "erandom" after "urandom" "/dev/erandom               u:object_r:erandom_device:s0\n";
+
+# irq balance
+replace_string init.angler.rc "service msm_irqbalance /vendor/bin/msm_irqbalance -f /msm_irqbalance.conf" "service msm_irqbalance /vendor/bin/msm_irqbalance -f /vendor/etc/msm_irqbalance.conf" "service msm_irqbalance /vendor/bin/msm_irqbalance -f /msm_irqbalance.conf"
 
 write_boot;
 
