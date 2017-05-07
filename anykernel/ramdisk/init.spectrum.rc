@@ -45,8 +45,8 @@ on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 0
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 0
     write /sys/module/cpu_boost/parameters/input_boost_freq 0:600000 1:600000 2:600000 3:600000 4:633600 5:633600 6:633600 7:633600
-    write /sys/module/cpu_boost/parameters/sync_threshold 1248000
     write /sys/module/cpu_boost/parameters/boost_ms 40
+    write /sys/module/cpu_boost/parameters/sync_threshold 1248000
     write /sys/module/cpu_boost/parameters/migration_load_threshold 15
     write /sys/module/cpu_boost/parameters/load_based_syncs Y
     write /sys/module/cpu_boost/parameters/shed_boost_on_input N
@@ -93,6 +93,10 @@ on property:persist.spectrum.profile=1
     write /sys/module/cpu_boost/parameters/input_boost_freq "0:1248000 1:1248000 2:1248000 3:1248000 4:0 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/boost_ms 80
     write /sys/module/cpu_boost/parameters/input_boost_ms 420
+    write /sys/module/cpu_boost/parameters/sync_threshold 1248000
+    write /sys/module/cpu_boost/parameters/migration_load_threshold 15
+    write /sys/module/cpu_boost/parameters/load_based_syncs Y
+    write /sys/module/cpu_boost/parameters/shed_boost_on_input N
     write /sys/module/msm_performance/parameters/touchboost 0
     write /sys/class/leds/lcd-backlight/max_brightness 255
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
@@ -115,6 +119,8 @@ on property:persist.spectrum.profile=2
     write /sys/module/cpu_boost/parameters/input_boost_ms 40
     write /sys/module/cpu_boost/parameters/migration_load_threshold 15
     write /sys/module/cpu_boost/parameters/sync_threshold 0
+    write /sys/module/cpu_boost/parameters/load_based_syncs N
+    write /sys/module/cpu_boost/parameters/shed_boost_on_input N
     write /sys/module/msm_performance/parameters/touchboost 0
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count 6
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling 12
@@ -166,6 +172,10 @@ on property:persist.spectrum.profile=3
     write /sys/module/cpu_boost/parameters/input_boost_freq "0:1248000 1:1248000 2:1248000 3:1248000 4:0 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/boost_ms 80
     write /sys/module/cpu_boost/parameters/input_boost_ms 420
+    write /sys/module/cpu_boost/parameters/sync_threshold 1248000
+    write /sys/module/cpu_boost/parameters/migration_load_threshold 15
+    write /sys/module/cpu_boost/parameters/load_based_syncs Y
+    write /sys/module/cpu_boost/parameters/shed_boost_on_input N
     write /sys/module/msm_performance/parameters/touchboost 0
     write /sys/class/leds/lcd-backlight/max_brightness 255
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
