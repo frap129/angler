@@ -1,5 +1,5 @@
-#ifndef LINUX_DECOMPRESS_INFLATE_H
-#define LINUX_DECOMPRESS_INFLATE_H
+#ifndef INFLATE_H
+#define INFLATE_H
 
 int gunzip(unsigned char *inbuf, int len,
 	   int(*fill)(void*, unsigned int),
