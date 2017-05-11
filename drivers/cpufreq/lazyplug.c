@@ -28,7 +28,7 @@
  * playback, turning on all CPU cores is not battery friendly. So Lazyplug
  * *does* actually turns off CPU cores, but only when idle state is long
  * enough(to reduce the number of CPU core switchings) and when the device
- * has its screen off(determination is done via lcd notifier because
+ * has its screen off(determination is done via state notifier because
  * framebuffer API causes troubles on hotplugging CPU cores).
  *
  * Basic methodology :
@@ -71,7 +71,7 @@
 #include <linux/slab.h>
 #include <linux/input.h>
 #include <linux/cpufreq.h>
-#include <linux/lcd_notify.h>
+#include <linux/state_notifier.h>
 
 //#define DEBUG_LAZYPLUG
 #undef DEBUG_LAZYPLUG
@@ -88,7 +88,7 @@
 
 static DEFINE_MUTEX(lazyplug_mutex);
 static DEFINE_MUTEX(lazymode_mutex);
-static struct notifier_block lcd_notifier_hook;
+static struct notifier_block state_notifier_hook;
 
 static struct delayed_work lazyplug_work;
 static struct delayed_work lazyplug_boost;
@@ -437,14 +437,14 @@ static void lazyplug_resume(void)
 		msecs_to_jiffies(10));
 }
 
-static int lcd_notifier_call(struct notifier_block *this,
+static int state_notifier_call(struct notifier_block *this,
 				unsigned long event, void *data)
 {
 	switch (event) {
-		case LCD_EVENT_ON_START:
+		case STATE_NOTIFIER_ACTIVE:
 			lazyplug_resume();
 			break;
-		case LCD_EVENT_OFF_END:
+		case STATE_NOTIFIER_SUSPEND:
 			lazyplug_suspend();
 			break;
 		default:
@@ -566,9 +566,9 @@ int __init lazyplug_init(void)
 
 	rc = input_register_handler(&lazyplug_input_handler);
 
-	lcd_notifier_hook.notifier_call = lcd_notifier_call;
-	if (lcd_register_client(&lcd_notifier_hook))
-		pr_info("%s lcd_notify hook create failed!\n", __FUNCTION__);
+	state_notifier_hook.notifier_call = state_notifier_call;
+	if (state_register_client(&state_notifier_hook))
+		pr_info("%s state_notifier hook create failed!\n", __FUNCTION__);
 
 	lazyplug_wq = alloc_workqueue("lazyplug",
 				WQ_HIGHPRI | WQ_UNBOUND, 1);
