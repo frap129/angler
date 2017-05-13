@@ -12,38 +12,40 @@ on property:sys.boot_completed=1
 
 # Balance (default profile)
 on property:persist.spectrum.profile=0
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor electron
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 384000
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1555200
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/go_hispeed_load 93
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/above_hispeed_delay 0  600000:19000 672000:20000 960000:24000 1248000:38000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_rate 50000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/hispeed_freq 600000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/timer_slack 380000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/target_loads 29 384000:88 600000:90 672000:92 960000:93 1248000:98
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/min_sample_time 60000
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boost 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/align_windows 1
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_migration_notif 1
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/use_sched_load 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/max_freq_hysteresis 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/interactive/boostpulse_duration 0
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/go_hispeed_load 93
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/above_hispeed_delay 0  600000:19000 672000:20000 960000:24000 1248000:38000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/timer_rate 50000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/hispeed_freq 600000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/timer_slack 380000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/target_loads 29 384000:88 600000:90 672000:92 960000:93 1248000:98
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/min_sample_time 60000
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/boost 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/align_windows 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/use_migration_notif 1
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/use_sched_load 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/max_freq_hysteresis 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/boostpulse_duration 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/electron/powersave_bias 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor electron
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 384000
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1958400
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/go_hispeed_load 150
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/above_hispeed_delay 20000 960000:40000 1248000:30000
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_rate 60000
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/hispeed_freq 384000
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/timer_slack 380000
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/target_loads 98
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/min_sample_time 60000
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boost 0
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/align_windows 1
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_migration_notif 1
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/use_sched_load 0
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 0
-    write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/go_hispeed_load 150
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/above_hispeed_delay 20000 960000:40000 1248000:30000
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/timer_rate 60000
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/hispeed_freq 384000
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/timer_slack 380000
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/target_loads 98
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/min_sample_time 60000
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/boost 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/align_windows 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/use_migration_notif 1
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/use_sched_load 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/max_freq_hysteresis 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/boostpulse_duration 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/electron/powersave_bias 1
     write /sys/module/cpu_boost/parameters/input_boost_freq 0:600000 1:600000 2:600000 3:600000 4:633600 5:633600 6:633600 7:633600
     write /sys/module/cpu_boost/parameters/boost_ms 40
     write /sys/module/cpu_boost/parameters/sync_threshold 1248000
