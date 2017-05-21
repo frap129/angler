@@ -148,14 +148,7 @@ config CPU_FREQ_DEFAULT_GOV_CULTIVATION
 	help
 	Use the CPUFreq governor 'cultivation' as default.
 
-config CPU_FREQ_DEFAULT_GOV_ELECTRON
-	bool "electron"
-	select CPU_FREQ_GOV_ELECTRON
-	help
-	  Use the CPUFreq governor 'electron' as default. This allows
-	  you to get a full dynamic cpu frequency capable system by simply
-	  loading your cpufreq low-level hardware driver, using the
-	  'electron' governor for latency-sensitive workloads.
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -253,12 +246,6 @@ config CPU_FREQ_GOV_CULTIVATION
 	depends on CPU_FREQ
 	help
 	  'cultivation' - another tuned interactive with extra options
-
-config CPU_FREQ_GOV_ELECTRON
-	tristate "'electron' cpufreq governor"
-	depends on CPU_FREQ
-	help
-	  'electron' - another tuned interactive with extra options
 
 config CPU_BOOST
 	tristate "Event base short term CPU freq boost"
