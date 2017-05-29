@@ -323,14 +323,22 @@ $(srctree)/scripts/Kbuild.include: ;
 include $(srctree)/scripts/Kbuild.include
 
 # Set optimization flags for gcc
-FLAGS := -march=armv8-a -mtune=cortex-a57.cortex-a53 -mcpu=cortex-a57.cortex-a53 -mlow-precision-recip-sqrt -mpc-relative-literal-loads -O3 -Wno-maybe-uninitialized -Wno-misleading-indentation -Wno-array-bounds -Wno-shift-overflow
+CC_FLAGS := -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves \
+	-fgraphite -fgraphite-identity -floop-strip-mine \
+	-floop-block -fira-loop-pressure -ftree-vectorize \
+	-fshrink-wrap-separate -mtune=cortex-a57.cortex-a53 \
+	--param l2-cache-size=4096 \
+	-Wno-maybe-uninitialized -Wno-misleading-indentation \
+	-Wno-array-bounds -Wno-shift-overflow
+
+LD_FLAGS := -O3 --gc-sections --sort-common
 
 
 # Make variables (CC, etc...)
 
 AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld
-CC		= $(CROSS_COMPILE)gcc $(FLAGS)
+LD		= $(CROSS_COMPILE)ld $(LD_FLAGS)
+CC		= $(CROSS_COMPILE)gcc $(CC_FLAGS)
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
