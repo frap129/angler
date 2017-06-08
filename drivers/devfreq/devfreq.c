@@ -46,8 +46,7 @@ static DEFINE_MUTEX(devfreq_list_lock);
 /* List of devices to boost when the screen is woken */
 static const char *boost_devices[] = {
 	"fc594000.ufshc",
-	"soc:qcom,cpubw",
-	NULL
+	"soc:qcom,cpubw"
 };
 
 #define WAKE_BOOST_DURATION_MS (5000)
@@ -1048,7 +1047,7 @@ static bool is_boost_device(struct devfreq *df)
 {
 	int i;
 
-	for (i = 0; boost_devices[i]; i++) {
+	for (i = 0; ARRAY_SIZE(boost_devices); i++) {
 		if (!strncmp(dev_name(&df->dev), boost_devices[i],
 				DEVFREQ_NAME_LEN))
 			return true;
