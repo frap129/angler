@@ -33,6 +33,11 @@ modules.builtin
 *.lzo
 *.patch
 *.gcno
+modules.builtin
+Module.symvers
+*.dwo
+*.su
+*.c.[012]*.*
 
 #
 # Top-level generic files
@@ -92,3 +97,16 @@ extra_certificates
 signing_key.priv
 signing_key.x509
 x509.genkey
+build.sh
+upload.sh
+firmware/synaptics/startup_fw_update-fhd.img
+firmware/synaptics/startup_fw_update.img
+kernel/x509_certificate_list
+
+# Electron Ignores
+*.rej
+*.save*
+*.old
+out
+anykernel/anykernel.sh
+anykernel/zImage
