@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Build script for Electron kernel for angler
+# Based on RenderBroken's shamu script
+
+
+# Variables
+export ARCH=arm64
+export SUBARCH=arm64
+export CROSS_COMPILE="/opt/aarch64-linux-gnu/bin/aarch64-linux-gnu-"
+THREAD=-j$(bc <<< $(grep -c ^processor /proc/cpuinfo)+2)
+DEFCONFIG="electron_defconfig"
+KROOT="$(pwd)"
+AK_DIR="$KROOT/anykernel"
+PATCH_DIR="$AK_DIR/patch"
+ZIP_MOVE="$KROOT/out-jenkins"
+IMAGE_DIR="$KROOT/arch/arm64/boot"
+export REL="Weekly"
+export TESTVER="-`date +%Y-%m-%d`"
+if [ "$TESTVER" = "-" ]; then
+unset TESTVER
+fi;
+
+# Functions
+function clean_all {
+		cd "$AK_DIR"
+		rm -rf zImage
+		cd "$KROOT"
+		echo
+		make mrproper
+}
+
+function make_kernel {
+		make $DEFCONFIG
+		if ! make $THREAD; then exit 1; fi;
+		cp -vr "$IMAGE_DIR/Image.gz-dtb" "$AK_DIR/zImage"
+}
+
+function make_modules {
+		find "$KROOT" -name '*.ko' -exec cp -v {} "$MODULES_DIR" \;
+}
+
+function make_zip {
+		cd "$AK_DIR"
+		sed -i "s/kernel.rel=.*/kernel.rel=$REL$TESTVER/g" anykernel.sh
+		zip -r9 Electron-Release-"$REL""$TESTVER".zip *
+		if ! [ -d "$ZIP_MOVE" ]; then
+		  mkdir "$ZIP_MOVE"
+		fi;
+		mv Electron-Release-"$REL""$TESTVER".zip "$ZIP_MOVE"
+		cd "$KERNEL_DIR"
+}
+
+clean_all
+echo
+echo "All Cleaned now."
+
+# Compile Kernel
+echo "Compiling Kernel.."
+DATE_START=$(date +"%s")
+make_kernel
+DATE_KERNEL_END=$(date +"%s")
+make_modules
+make_zip
+DATE_END=$(date +"%s")
+
+echo -e "${red}"
+echo "----------------------"
+echo " Kernel Completed in:"
+echo "----------------------"
+echo -e "${restore}"
+KDIFF=$(($DATE_KERNEL_END - $DATE_START))
+echo "$(($KDIFF / 60)) minute(s) and $(($KDIFF % 60)) seconds."
+echo
+echo -e "${red}"
+echo "-------------------"
+echo " Zip Completed in:"
+echo "-------------------"
+echo -e "${restore}"
+DIFF=$(($DATE_END - $DATE_START))
+echo "$(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
+echo
+echo "Image size: $(du -h $IMAGE_DIR/Image.gz-dtb)"
+echo
+echo "Zip size: $(du -h $ZIP_MOVE/*.zip)"
+
