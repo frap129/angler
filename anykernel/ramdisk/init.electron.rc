@@ -13,6 +13,8 @@ on property:sys.boot_completed=1
     write /sys/module/lpm_levels/system/a53/cpu3/retention/idle_enabled 1
     write /sys/module/lpm_levels/system/a57/cpu4/retention/idle_enabled 1
     write /sys/module/lpm_levels/system/a57/cpu5/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a57/cpu6/retention/idle_enabled 1
+    write /sys/module/lpm_levels/system/a57/cpu7/retention/idle_enabled 1
     write /sys/module/lpm_levels/system/a53/a53-l2-retention/idle_enabled 1
     write /sys/module/lpm_levels/system/a57/a57-l2-retention/idle_enabled 1
 
@@ -25,6 +27,8 @@ on property:sys.boot_completed=1
     write /sys/module/wakeup/parameters/enable_netlink_ws 0
     write /sys/module/wakeup/parameters/enable_ipa_ws 0
     write /sys/module/wakeup/parameters/enable_timerfd_ws 0
+    write /sys/module/bcmdhd/parameters/wlrx_divide 8
+    write /sys/module/bcmdhd/parameters/wlctrl_divide 8
 
     # Start Power tweaks
     exec u:r:init:s0 root root -- /init.special_power.sh
@@ -44,9 +48,6 @@ on property:sys.boot_completed=1
     write /sys/block/mmcblk0/queue/iosched/async_write_expire 450
     write /sys/block/mmcblk0/queue/iosched/sleep_latency_multiple 10
 
-    # Set cpuset background CPUs
-    write /dev/cpuset/background/cpus 0-2
-   
     # Enable ZSwap
     write /sys/module/zswap/parameters/enabled Y
     
@@ -64,3 +65,15 @@ on property:sys.boot_completed=1
 
     # Enable Fingerprint boost
     write /sys/kernel/fp_boost/enabled 1
+
+    # Enable Double Tap to Wake
+    chown system system /sys/android_touch/doubletap2wake
+    chmod 664 /sys/android_touch/doubletap2wake
+    write /sys/android_touch/doubletap2wake 2
+
+    # Disable core control, enable msm_thermal
+    write /sys/module/msm_thermal/core_control/enabled 0
+    write /sys/module/msm_thermal/parameters/enabled 1
+
+    # Backlight dimmer
+    write /sys/module/mdss_fb/parameters/backlight_dimmer 1
