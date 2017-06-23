@@ -7,7 +7,7 @@
 # Variables
 export ARCH=arm64
 export SUBARCH=arm64
-export CROSS_COMPILE="/opt/aarch64-linux-gnu/bin/aarch64-linux-gnu-"
+export CROSS_COMPILE="/home/frap129/android/kernel/aarch64-linaro-linux-gnu/bin/aarch64-linux-gnu-"
 THREAD=-j$(bc <<< $(grep -c ^processor /proc/cpuinfo)+2)
 DEFCONFIG="electron_defconfig"
 KROOT="$(pwd)"
