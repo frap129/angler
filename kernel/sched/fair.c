@@ -2939,10 +2939,12 @@ int sched_hmp_proc_update_handler(struct ctl_table *table, int write,
 	   takes care of a possible reclassification when shadow
 	   activity changes. */
 	if (sched_shadow_active) {
-		if (data == &sysctl_sched_shadow_upmigrate_pct)
+		if (data == &sysctl_sched_shadow_upmigrate_pct
+				|| data == &sysctl_sched_shadow_downmigrate_pct)
 			force_reclassify = true;
 	} else {
-		if (data == &sysctl_sched_upmigrate_pct)
+		if (data == &sysctl_sched_upmigrate_pct
+				|| data == &sysctl_sched_downmigrate_pct)
 			force_reclassify = true;
 	}
 
