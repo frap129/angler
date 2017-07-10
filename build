@@ -15,7 +15,7 @@ AK_DIR="$KROOT/anykernel"
 PATCH_DIR="$AK_DIR/patch"
 ZIP_MOVE="$KROOT/out"
 IMAGE_DIR="$KROOT/arch/arm64/boot"
-export REL="v13"
+export REL="v14"
 export TESTVER="-$1"
 if [ "$TESTVER" = "-" ]; then
 unset TESTVER
