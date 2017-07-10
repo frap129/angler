@@ -16,11 +16,22 @@ on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor relaxed
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 302400
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1555200
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count 8
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling 12
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step 6
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold 60
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85
+    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 70
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor chill
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 633600
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 384000
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1958400
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count 8
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step 4
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold 75
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99
+    write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
     write /sys/module/cpu_boost/parameters/boost_ms 40
-    write /sys/module/cpu_boost/parameters/input_boost_freq 0:600000 1:600000 2:600000 3:600000 4:960000 5:960000 6:0 7:0
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:600000 1:600000 2:600000 3:600000 4:960000 5:960000 6:0 7:0"
     write /sys/module/cpu_boost/parameters/sync_threshold 1248000
     write /sys/module/cpu_boost/parameters/migration_load_threshold 15
     write /sys/module/cpu_boost/parameters/load_based_syncs Y
@@ -28,24 +39,9 @@ on property:persist.spectrum.profile=0
     write /sys/module/cpu_boost/parameters/input_boost_ms 300
     write /sys/module/cpu_boost/parameters/input_boost_enabled 1
     write /sys/module/msm_performance/parameters/touchboost 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_count 5
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/boost_ceiling 10
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count 10
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/freq_step 6
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step 4
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold 60
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold 75
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99
-    write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 70
-    write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
-    write /sys/module/msm_performance/parameters/touchboost 0
     write /sys/class/leds/lcd-backlight/max_brightness 255
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/module/adreno_idler/parameters/adreno_idler_active 1
-    write /dev/cpuset/foreground/cpus 0-2,4-7
-    write /dev/cpuset/foreground/boost/cpus 4-7
-    write /dev/cpuset/top-app/cpus 0-7
 
 # Performance (based on DrunkSauce Lite)
 on property:persist.spectrum.profile=1
@@ -88,9 +84,6 @@ on property:persist.spectrum.profile=1
     write /sys/class/leds/lcd-backlight/max_brightness 255
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/module/adreno_idler/parameters/adreno_idler_active 1
-    write /dev/cpuset/foreground/cpus 0-2,4-7
-    write /dev/cpuset/foreground/boost/cpus 4-7
-    write /dev/cpuset/top-app/cpus 0-7
 
 # Battery
 on property:persist.spectrum.profile=2
@@ -122,9 +115,6 @@ on property:persist.spectrum.profile=2
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor powersave
     write /sys/class/leds/lcd-backlight/max_brightness 100
-    write /dev/cpuset/foreground/cpus 0-2,4-5
-    write /dev/cpuset/foreground/boost/cpus 4-5
-    write /dev/cpuset/top-app/cpus 0-5
 
 # Gaming
 on property:persist.spectrum.profile=3
@@ -167,6 +157,3 @@ on property:persist.spectrum.profile=3
     write /sys/class/leds/lcd-backlight/max_brightness 255
     write /sys/class/kgsl/kgsl-3d0/devfreq/governor msm-adreno-tz
     write /sys/module/adreno_idler/parameters/adreno_idler_active 0
-    write /dev/cpuset/foreground/cpus 0-2,4-7
-    write /dev/cpuset/foreground/boost/cpus 4-7
-    write /dev/cpuset/top-app/cpus 0-7
