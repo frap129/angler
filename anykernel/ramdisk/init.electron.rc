@@ -77,3 +77,9 @@ on property:sys.boot_completed=1
 
     # Backlight dimmer
     write /sys/module/mdss_fb/parameters/backlight_dimmer 1
+
+    # Disable Gentle Fair Sleepers
+    write /sys/kernel/sched/gentle_fair_sleepers 0
+
+    # Disable FSync
+    write /sys/module/sync/parameters/fsync_enabled N
