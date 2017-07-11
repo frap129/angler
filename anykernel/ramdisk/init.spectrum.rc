@@ -23,7 +23,7 @@ on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/down_threshold_suspended 85
     write /sys/devices/system/cpu/cpu0/cpufreq/relaxed/up_threshold 70
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor chill
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 384000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 302000
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1958400
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/boost_count 8
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/freq_step 4
@@ -73,7 +73,7 @@ on property:persist.spectrum.profile=1
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 20000
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 80000
     write /sys/module/cpu_boost/parameters/input_boost_enabled 1
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1248000 1:1248000 2:1248000 3:1248000 4:0 5:0 6:0 7:0"
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1248000 1:1248000 2:1248000 3:1248000 4:960000 5:960000 6:960000 7:960000"
     write /sys/module/cpu_boost/parameters/boost_ms 80
     write /sys/module/cpu_boost/parameters/input_boost_ms 420
     write /sys/module/cpu_boost/parameters/sync_threshold 1248000
@@ -91,10 +91,10 @@ on property:persist.spectrum.profile=2
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 302400
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1248000
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor relaxed
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 633600
-    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 960000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 302000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 1440000
     write /sys/module/cpu_boost/parameters/input_boost_enabled 0
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:0 1:600000 2:600000 3:600000 4:960000 5:960000 6:0 7:0"
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:0 1:600000 2:600000 3:600000 4:960000 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/boost_ms 0
     write /sys/module/cpu_boost/parameters/input_boost_ms 40
     write /sys/module/cpu_boost/parameters/migration_load_threshold 15
@@ -146,7 +146,7 @@ on property:persist.spectrum.profile=3
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/max_freq_hysteresis 20000
     write /sys/devices/system/cpu/cpu4/cpufreq/interactive/boostpulse_duration 80000
     write /sys/module/cpu_boost/parameters/input_boost_enabled 1
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1248000 1:1248000 2:1248000 3:1248000 4:0 5:0 6:0 7:0"
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1248000 1:1248000 2:1248000 3:1248000 4:960000 5:960000 6:960000 7:960000"
     write /sys/module/cpu_boost/parameters/boost_ms 80
     write /sys/module/cpu_boost/parameters/input_boost_ms 420
     write /sys/module/cpu_boost/parameters/sync_threshold 1248000
