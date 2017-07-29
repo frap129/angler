@@ -329,7 +329,6 @@ CC_FLAGS := -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves \
 	-fgraphite -fgraphite-identity -floop-strip-mine \
 	-floop-block -fira-loop-pressure -ftree-vectorize \
 	-fshrink-wrap-separate -mtune=cortex-a57.cortex-a53 \
-	--param l2-cache-size=4096 \
 	-Wno-maybe-uninitialized -Wno-misleading-indentation \
 	-Wno-array-bounds -Wno-shift-overflow
 
