@@ -333,7 +333,7 @@ CC_FLAGS := -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves \
 	-Wno-maybe-uninitialized -Wno-misleading-indentation \
 	-Wno-array-bounds -Wno-shift-overflow
 
-LD_FLAGS := -O3 --sort-common
+LD_FLAGS := -O3 --sort-common --strip-debug
 
 # Make variables (CC, etc...)
 
@@ -344,7 +344,7 @@ CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
 STRIP		= $(CROSS_COMPILE)strip
-OBJCOPY		= $(CROSS_COMPILE)objcopy
+OBJCOPY		= $(CROSS_COMPILE)objcopy --remove-section=.note.gnu.build-id
 OBJDUMP		= $(CROSS_COMPILE)objdump
 AWK		= awk
 GENKSYMS	= scripts/genksyms/genksyms
