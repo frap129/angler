@@ -3,11 +3,12 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.rel=v14-volt
+kernel.rel=v14
 do.devicecheck=1
 do.initd=0
 do.modules=0
 do.cleanup=1
+do.powerhal=1
 device.name1=angler
 
 # shell variables
