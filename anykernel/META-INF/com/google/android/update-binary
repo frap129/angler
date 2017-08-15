@@ -91,7 +91,7 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.powerhal)" == 1 ]; then
   ui_print "Installing custom PowerHAL...";
   mount -o remount,rw /system;
   rm -f /system/lib64/hw/power.angler.so;
-  cp -f /tmp/anykernel/power/power.electron.so /system/lib64/hw/power.angler.so;
+  cp -f /tmp/anykernel/lib64/hw/power.electron.so /system/lib64/hw/power.angler.so;
   set_perm_recursive 0 0 0755 0644 /system/lib64/hw/power.angler.so;
   mount -o remount,ro /system;
 fi;
