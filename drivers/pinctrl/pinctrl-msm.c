@@ -333,7 +333,7 @@ static int msm_dt_node_to_map(struct pinctrl_dev *pctldev,
 	/* Get function mapping */
 	of_property_read_u32(parent, "qcom,pin-func", &val);
 
-	fn_name_len = strlen(grp_name) + strlen("-func") + 1;
+	fn_name_len = strlen(grp_name) + DSTRLEN("-func") + 1;
 	fn_name = kzalloc(fn_name_len, GFP_KERNEL);
 	if (!fn_name) {
 		ret = -ENOMEM;
@@ -510,7 +510,7 @@ static int msm_pinctrl_dt_parse_pins(struct device_node *dev_node,
 		if (!of_find_property(pgrp_np, "qcom,pin-func", NULL))
 			continue;
 		curr_func = pmx_funcs + func_index;
-		len = strlen(grp_name) + strlen("-func") + 1;
+		len = strlen(grp_name) + DSTRLEN("-func") + 1;
 		func_name = devm_kzalloc(dev, len, GFP_KERNEL);
 		if (!func_name) {
 			dev_err(dev, "Cannot allocate func name for grp %s",

@@ -2787,7 +2787,7 @@ int mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
 	/*
 	 * Sanity check:  room for longest mode, flag and some nodes
 	 */
-	VM_BUG_ON(maxlen < strlen("interleave") + strlen("relative") + 16);
+	VM_BUG_ON(maxlen < DSTRLEN("interleave") + DSTRLEN("relative") + 16);
 
 	if (!pol || pol == &default_policy || (pol->flags & MPOL_F_MORON))
 		mode = MPOL_DEFAULT;

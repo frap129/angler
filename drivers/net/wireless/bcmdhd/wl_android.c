@@ -255,7 +255,7 @@ static int wl_android_get_rssi(struct net_device *net, char *command, int total_
 		}
 	}
 
-	if ((total_len - bytes_written) >= (strlen(" rssi -XXX") + 1)) {
+	if ((total_len - bytes_written) >= (DSTRLEN(" rssi -XXX") + 1)) {
 		bytes_written += snprintf(&command[bytes_written], total_len - bytes_written,
 		" rssi %d", rssi);
 		command[bytes_written] = '\0';
@@ -783,7 +783,7 @@ wl_android_set_pmk(struct net_device *dev, char *command, int total_len)
 #endif
 
 	bzero(pmk, sizeof(pmk));
-	memcpy((char *)pmk, command + strlen("SET_PMK "), 32);
+	memcpy((char *)pmk, command + DSTRLEN("SET_PMK "), 32);
 	error = wldev_iovar_setbuf(dev, "okc_info_pmk", pmk, 32, smbuf, sizeof(smbuf), NULL);
 	if (error) {
 		DHD_ERROR(("Failed to set PMK for OKC, error = %d\n", error));
@@ -1571,7 +1571,7 @@ wl_handle_private_cmd(struct net_device *net, char *command, u32 buf_size)
 	else {
 		DHD_ERROR(("Unknown PRIVATE command %s - ignored\n", command));
 		snprintf(command, 5, "FAIL");
-		bytes_written = strlen("FAIL");
+		bytes_written = DSTRLEN("FAIL");
 	}
 
 	return bytes_written;

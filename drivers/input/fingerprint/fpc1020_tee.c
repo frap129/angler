@@ -301,7 +301,7 @@ static ssize_t hw_reset_set(struct device *dev,
 	int rc;
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
-	if (!strncmp(buf, "reset", strlen("reset")))
+	if (!strncmp(buf, "reset", DSTRLEN("reset")))
 		rc = hw_reset(fpc1020);
 	else
 		return -EINVAL;
@@ -352,9 +352,9 @@ static ssize_t spi_prepare_set(struct device *dev,
 	int rc;
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
-	if (!strncmp(buf, "enable", strlen("enable")))
+	if (!strncmp(buf, "enable", DSTRLEN("enable")))
 		rc = device_prepare(fpc1020, true);
-	else if (!strncmp(buf, "disable", strlen("disable")))
+	else if (!strncmp(buf, "disable", DSTRLEN("disable")))
 		rc = device_prepare(fpc1020, false);
 	else
 		return -EINVAL;
@@ -373,10 +373,10 @@ static ssize_t wakeup_enable_set(struct device *dev,
 {
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
-	if (!strncmp(buf, "enable", strlen("enable"))) {
+	if (!strncmp(buf, "enable", DSTRLEN("enable"))) {
 		fpc1020->wakeup_enabled = true;
 		smp_wmb();
-	} else if (!strncmp(buf, "disable", strlen("disable"))) {
+	} else if (!strncmp(buf, "disable", DSTRLEN("disable"))) {
 		fpc1020->wakeup_enabled = false;
 		smp_wmb();
 	} else
