@@ -96,6 +96,21 @@ if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.powerhal)" == 1 ]; then
   mount -o remount,ro /system;
 fi;
 
+if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.perfblobs)" == 1 ]; then
+  ui_print "Installing custom perfd blobs...";
+  mount -o rw /vendor;
+  rm -f /vendor/bin/perfd;
+  rm -f /vendor/lib/libqti-perfd-client.so;
+  rm -f /vendor/lib64/libqti-perfd-client.so;
+  cp -f /tmp/anykernel/bin/perfd /vendor/bin/perfd;
+  cp -f /tmp/anykernel/lib/libqti-perfd-client.so /vendor/lib/libqti-perfd-client.so;
+  cp -f /tmp/anykernel/lib64/libqti-perfd-client.so /vendor/lib64/libqti-perfd-client.so;
+  set_perm_recursive 0 0 0755 0644 /vendor/bin/perfd;
+  set_perm_recursive 0 0 0755 0644 /vendor/lib/libqti-perfd-client.so;
+  set_perm_recursive 0 0 0755 0644 /vendor/lib64/libqti-perfd-client.so;
+  umount /vendor;
+fi;
+
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanup)" == 1 ]; then
   rm -rf /tmp/anykernel;
 fi;
