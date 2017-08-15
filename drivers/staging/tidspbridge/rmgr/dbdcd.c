@@ -208,7 +208,7 @@ int dcd_enumerate_object(s32 index, enum dsp_dcdobjtype obj_type,
 		/* Create proper REG key; concatenate DCD_REGKEY with
 		 * obj_type. */
 		strncpy(sz_reg_key, DCD_REGKEY, strlen(DCD_REGKEY) + 1);
-		if ((strlen(sz_reg_key) + strlen("_\0")) <
+		if ((strlen(sz_reg_key) + DSTRLEN("_\0")) <
 		    DCD_MAXPATHLENGTH) {
 			strncat(sz_reg_key, "_\0", 2);
 		} else {
@@ -377,7 +377,7 @@ int dcd_get_object_def(struct dcd_manager *hdcd_mgr,
 	/* Create proper REG key; concatenate DCD_REGKEY with obj_type. */
 	strncpy(sz_reg_key, DCD_REGKEY, strlen(DCD_REGKEY) + 1);
 
-	if ((strlen(sz_reg_key) + strlen("_\0")) < DCD_MAXPATHLENGTH)
+	if ((strlen(sz_reg_key) + DSTRLEN("_\0")) < DCD_MAXPATHLENGTH)
 		strncat(sz_reg_key, "_\0", 2);
 	else
 		status = -EPERM;
@@ -649,7 +649,7 @@ int dcd_get_library_name(struct dcd_manager *hdcd_mgr,
 
 	/* Create proper REG key; concatenate DCD_REGKEY with obj_type. */
 	strncpy(sz_reg_key, DCD_REGKEY, strlen(DCD_REGKEY) + 1);
-	if ((strlen(sz_reg_key) + strlen("_\0")) < DCD_MAXPATHLENGTH)
+	if ((strlen(sz_reg_key) + DSTRLEN("_\0")) < DCD_MAXPATHLENGTH)
 		strncat(sz_reg_key, "_\0", 2);
 	else
 		status = -EPERM;
@@ -709,7 +709,7 @@ int dcd_get_library_name(struct dcd_manager *hdcd_mgr,
 			*phase_split = false;
 
 		strncpy(sz_reg_key, DCD_REGKEY, strlen(DCD_REGKEY) + 1);
-		if ((strlen(sz_reg_key) + strlen("_\0")) <
+		if ((strlen(sz_reg_key) + DSTRLEN("_\0")) <
 		    DCD_MAXPATHLENGTH) {
 			strncat(sz_reg_key, "_\0", 2);
 		} else {
@@ -794,7 +794,7 @@ int dcd_register_object(struct dsp_uuid *uuid_obj,
 
 	/* Create proper REG key; concatenate DCD_REGKEY with obj_type. */
 	strncpy(sz_reg_key, DCD_REGKEY, strlen(DCD_REGKEY) + 1);
-	if ((strlen(sz_reg_key) + strlen("_\0")) < DCD_MAXPATHLENGTH)
+	if ((strlen(sz_reg_key) + DSTRLEN("_\0")) < DCD_MAXPATHLENGTH)
 		strncat(sz_reg_key, "_\0", 2);
 	else {
 		status = -EPERM;

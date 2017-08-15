@@ -2403,7 +2403,7 @@ int dhd_prot_ioctl(dhd_pub_t *dhd, int ifidx, wl_ioctl_t * ioc, void * buf, int 
 	if ((!ret) && (ioc->cmd == WLC_SET_VAR) && (!strcmp(buf, "wme_dp"))) {
 		int slen, val = 0;
 
-		slen = strlen("wme_dp") + 1;
+		slen = DSTRLEN("wme_dp") + 1;
 		if (len >= (int)(slen + sizeof(int)))
 			bcopy(((char *)buf + slen), &val, sizeof(int));
 		dhd->wme_dp = (uint8) ltoh32(val);
@@ -2628,11 +2628,11 @@ dhdmsgbuf_query_ioctl(dhd_pub_t *dhd, int ifidx, uint cmd, void *buf, uint len, 
 	}
 	if (cmd == WLC_GET_VAR) {
 		/* Respond "bcmerror" and "bcmerrorstr" with local cache */
-		if ((len > strlen("bcmerrorstr")) &&
+		if ((len > DSTRLEN("bcmerrorstr")) &&
 		    !strcmp(buf, "bcmerrorstr")) {
 			strlcpy(buf, bcmerrorstr(dhd->dongle_error), len);
 			goto done;
-		} else if ((len > strlen("bcmerror")) &&
+		} else if ((len > DSTRLEN("bcmerror")) &&
 			   !strcmp(buf, "bcmerror")) {
 			memcpy(buf, &dhd->dongle_error,
 			       sizeof(dhd->dongle_error));

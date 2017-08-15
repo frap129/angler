@@ -278,7 +278,7 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size)
 	}
 	list_add(&dev->list, &blkmtd_device_list);
 	INFO("mtd%d: [%s] erase_size = %dKiB [%d]", dev->mtd.index,
-			dev->mtd.name + strlen("block2mtd: "),
+			dev->mtd.name + DSTRLEN("block2mtd: "),
 			dev->mtd.erasesize >> 10, dev->mtd.erasesize);
 	return dev;
 
@@ -445,7 +445,7 @@ static void block2mtd_exit(void)
 		block2mtd_sync(&dev->mtd);
 		mtd_device_unregister(&dev->mtd);
 		INFO("mtd%d: [%s] removed", dev->mtd.index,
-				dev->mtd.name + strlen("block2mtd: "));
+				dev->mtd.name + DSTRLEN("block2mtd: "));
 		list_del(&dev->list);
 		block2mtd_free_device(dev);
 	}
