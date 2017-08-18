@@ -3,7 +3,7 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.rel=v14-shadow2
+kernel.rel=v14-color
 do.devicecheck=1
 do.initd=0
 do.modules=0

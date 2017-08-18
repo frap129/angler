@@ -31,7 +31,7 @@ on property:persist.spectrum.profile=0
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/down_threshold_suspended 99
     write /sys/devices/system/cpu/cpu4/cpufreq/chill/up_threshold 90
     write /sys/module/cpu_boost/parameters/boost_ms 40
-    write /sys/module/cpu_boost/parameters/input_boost_freq "0:600000 1:600000 2:600000 3:600000 4:960000 5:960000 6:0 7:0"
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:600000 1:600000 2:600000 3:600000 4:0 5:0 6:0 7:0"
     write /sys/module/cpu_boost/parameters/sync_threshold 1248000
     write /sys/module/cpu_boost/parameters/migration_load_threshold 15
     write /sys/module/cpu_boost/parameters/load_based_syncs Y
