@@ -40,7 +40,7 @@
 #include <trace/events/trace_msm_core.h>
 
 #define TEMP_BASE_POINT 35
-#define TEMP_MAX_POINT 95
+#define TEMP_MAX_POINT 55
 #define CPU_HOTPLUG_LIMIT 80
 #define CPU_BIT_MASK(cpu) BIT(cpu)
 #define DEFAULT_TEMP 40
