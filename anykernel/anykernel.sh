@@ -3,7 +3,7 @@
 
 ## AnyKernel setup
 # EDIFY properties
-kernel.rel=v15
+kernel.rel=v15-o-test2
 do.devicecheck=1
 do.initd=0
 do.modules=0
