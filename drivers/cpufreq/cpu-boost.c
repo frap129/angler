@@ -24,8 +24,6 @@
 #include <linux/time.h>
 #include <linux/fsync.h>
 
-#include "../../kernel/sched/sched.h"
-
 struct cpu_sync {
 	int cpu;
 	unsigned int input_boost_min;
@@ -133,10 +131,6 @@ static int boost_adjust_notify(struct notifier_block *nb, unsigned long val,
 		if (!ib_min)
 			break;
 
-		ib_min = min(ib_min, policy->max);
-
-		min = min(min, policy->max);
-
 		pr_debug("CPU%u policy min before boost: %u kHz\n",
 			 cpu, policy->min);
 		pr_debug("CPU%u boost min: %u kHz\n", cpu, ib_min);
@@ -212,17 +206,6 @@ static void do_input_boost(struct work_struct *work)
 	set_fsync(false);
 	for_each_possible_cpu(i) {
 		i_sync_info = &per_cpu(sync_info, i);
-
-		// cpu 0-3 -> silver cluster
-		// cpu 4-7 -> gold cluster
-		// to save power there's no point in boosting the
-		// gold cluster core if it doesn't have any runnable
-		// thread at this point in time
-		// since inputs are fairly common we might save some
-		// juice in the long run
-		if (i >= 4 && cpu_rq(i)->nr_running == 0)
-			continue;
-
 		i_sync_info->input_boost_min = i_sync_info->input_boost_freq;
 	}
 
@@ -253,7 +236,7 @@ static void cpuboost_input_event(struct input_handle *handle,
 		return;
 
 	now = ktime_to_us(ktime_get());
-	if ((now - last_input_time) < (input_boost_ms * USEC_PER_MSEC))
+	if (now - last_input_time < MIN_INPUT_INTERVAL)
 		return;
 
 	if (work_pending(&input_boost_work))
