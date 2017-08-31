@@ -63,9 +63,6 @@ on property:sys.boot_completed=1
     # Don't treat storage as rotational
     write /sys/block/mmcblk0/queue/rotational 0
 
-    # Enable Fingerprint boost
-    write /sys/kernel/fp_boost/enabled 1
-
     # Enable Double Tap to Wake
     chown system system /sys/android_touch/doubletap2wake
     chmod 664 /sys/android_touch/doubletap2wake
