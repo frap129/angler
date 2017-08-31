@@ -51,6 +51,10 @@ static bool need_suspend_ops(suspend_state_t state)
 static DECLARE_WAIT_QUEUE_HEAD(suspend_freeze_wait_head);
 static bool suspend_freeze_wake;
 
+#ifdef CONFIG_QUICK_THAW_FINGERPRINTD
+extern void thaw_fingerprintd(void);
+#endif
+
 void freeze_set_ops(const struct platform_freeze_ops *ops)
 {
 	lock_system_sleep();
@@ -259,6 +263,10 @@ static int suspend_enter(suspend_state_t state, bool *wakeup)
  Platform_wake:
 	if (need_suspend_ops(state) && suspend_ops->wake)
 		suspend_ops->wake();
+
+#ifdef CONFIG_QUICK_THAW_FINGERPRINTD
+	thaw_fingerprintd();
+#endif
 
 	dpm_resume_start(PMSG_RESUME);
 
