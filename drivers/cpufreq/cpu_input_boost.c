@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014-2017, Sultanxda <sultanxda@gmail.com>
+ *           (C) 2017, Joe Maples <joe@frap129.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -27,6 +28,9 @@
  */
 #define LITTLE_CPU_MASK (CPU_MASK(0) | CPU_MASK(1) | CPU_MASK(2) | CPU_MASK(3))
 #define BIG_CPU_MASK (CPU_MASK(4) | CPU_MASK(5) | CPU_MASK(6) | CPU_MASK(7))
+
+/* Fingerprint sensor input key */
+#define FINGERPRINT_KEY 0x2ee
 
 /* Available bits for boost_policy state */
 #define DRIVER_ENABLED        (1U << 0)
@@ -415,6 +419,11 @@ static const struct input_device_id cpu_ib_ids[] = {
 	{
 		.flags = INPUT_DEVICE_ID_MATCH_EVBIT,
 		.evbit = { BIT_MASK(EV_KEY) },
+	},
+	/* fingerprint sensor */
+	{
+		.flags = INPUT_DEVICE_ID_MATCH_KEYBIT,
+		.keybit = { [BIT_WORD(FINGERPRINT_KEY)] = BIT_MASK(FINGERPRINT_KEY) },
 	},
 	{ },
 };
