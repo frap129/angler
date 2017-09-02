@@ -92,3 +92,11 @@ on property:sys.boot_completed=1
 
     # Disable FSync
     write /sys/module/sync/parameters/fsync_enabled N
+
+    # big.LITTLE scheduler tweaks
+    write /proc/sys/kernel/sched_upmigrate_min_nice 8
+    write /proc/sys/kernel/sched_upmigrate 97
+    write /proc/sys/kernel/sched_downmigrate 80
+    write /sys/devices/system/cpu/cpu0/sched_mostly_idle_freq 960000
+    write /sys/devices/system/cpu/cpu0/sched_mostly_idle_load 25
+    write /sys/devices/system/cpu/cpu0/sched_mostly_idle_nr_run 5
