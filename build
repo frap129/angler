@@ -44,7 +44,7 @@ function make_modules {
 
 function make_zip {
 		cd $AK_DIR
-		sed -i "s/kernel.rel=.*/kernel.rel=$REL$TESTVER/g" anykernel.sh
+		echo "$REL""$TESTVER" > VERSION;
 		zip -r9 Electron-Release-"$REL""$TESTVER".zip *
 		if ! [ -d "$ZIP_MOVE" ]; then
 		  mkdir $ZIP_MOVE

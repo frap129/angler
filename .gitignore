@@ -113,5 +113,5 @@ kernel/x509_certificate_list
 *.rej
 *.save*
 *.old
-anykernel/anykernel.sh
+anykernel/VERSION
 anykernel/zImage
