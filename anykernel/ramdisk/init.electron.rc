@@ -66,7 +66,6 @@ on property:sys.boot_completed=1
     write /sys/android_touch/doubletap2wake 2
 
     # Enable core control with custom config
-    write /sys/module/msm_thermal/core_control/enabled 1
     write /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres 95
     write /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres 80
     write /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms 800
@@ -97,3 +96,16 @@ on property:sys.boot_completed=1
     write /sys/devices/system/cpu/cpu0/sched_mostly_idle_freq 960000
     write /sys/devices/system/cpu/cpu0/sched_mostly_idle_load 25
     write /sys/devices/system/cpu/cpu0/sched_mostly_idle_nr_run 6
+
+    # Congigure Simple Thermal driver
+    write /sys/kernel/msm_thermal/zone0 "1555200 1536000 40 38"
+    write /sys/kernel/msm_thermal/zone1 "1478400 1536000 41 40"
+    write /sys/kernel/msm_thermal/zone2 "1478400 1440000 42 41"
+    write /sys/kernel/msm_thermal/zone3 "1344000 1440000 43 42"
+    write /sys/kernel/msm_thermal/zone4 "1344000 1344000 44 43"
+    write /sys/kernel/msm_thermal/zone5 "1248000 1344000 46 44"
+    write /sys/kernel/msm_thermal/zone6 "960000 1248000 48 46"
+    write /sys/kernel/msm_thermal/zone7 "960000 960000 53 50"
+    write /sys/kernel/msm_thermal/zone8 "768000 768000 65 60"
+    write /sys/kernel/msm_thermal/sampling_ms 8000
+    write /sys/kernel/msm_thermal/enabled 1
