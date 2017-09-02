@@ -95,8 +95,8 @@ on property:sys.boot_completed=1
 
     # big.LITTLE scheduler tweaks
     write /proc/sys/kernel/sched_upmigrate_min_nice 8
-    write /proc/sys/kernel/sched_upmigrate 97
-    write /proc/sys/kernel/sched_downmigrate 80
+    write /proc/sys/kernel/sched_upmigrate 98
+    write /proc/sys/kernel/sched_downmigrate 85
     write /sys/devices/system/cpu/cpu0/sched_mostly_idle_freq 960000
     write /sys/devices/system/cpu/cpu0/sched_mostly_idle_load 25
-    write /sys/devices/system/cpu/cpu0/sched_mostly_idle_nr_run 5
+    write /sys/devices/system/cpu/cpu0/sched_mostly_idle_nr_run 6
