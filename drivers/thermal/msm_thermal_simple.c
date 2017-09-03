@@ -71,8 +71,17 @@ static uint32_t get_throttle_freq(struct thermal_policy *t,
 		int32_t idx, uint32_t cpu);
 static void set_throttle_freq(struct thermal_policy *t,
 		int32_t idx, uint32_t cpu, uint32_t freq);
-static bool validate_cpu_freq(struct cpufreq_frequency_table *pos,
-		uint32_t *freq);
+static bool validate_cpu_freq(unsigned int cpu, uint32_t *freq);
+
+static inline bool cpufreq_next_valid(struct cpufreq_frequency_table **pos)
+{
+	while ((*pos)->frequency != CPUFREQ_TABLE_END)
+		if ((*pos)->frequency != CPUFREQ_ENTRY_INVALID)
+			return true;
+		else
+			(*pos)++;
+	return false;
+}
 
 static void msm_thermal_main(struct work_struct *work)
 {
@@ -196,7 +205,7 @@ static int do_cpu_throttle(struct notifier_block *nb,
 		 * (validate_cpu_freq() returns true), then update the
 		 * throttle zone freq array with the validated frequency.
 		 */
-		ret = validate_cpu_freq(policy->freq_table, &new_max);
+		ret = validate_cpu_freq(policy->cpu, &new_max);
 		if (ret)
 			set_throttle_freq(t, zone, policy->cpu, new_max);
 		if (policy->max > new_max)
@@ -259,10 +268,12 @@ static void set_throttle_freq(struct thermal_policy *t,
 	spin_unlock(&t->lock);
 }
 
-static bool validate_cpu_freq(struct cpufreq_frequency_table *pos,
-		uint32_t *freq)
+static bool validate_cpu_freq(unsigned int cpu, uint32_t *freq)
 {
 	struct cpufreq_frequency_table *next;
+	struct cpufreq_frequency_table *pos;
+
+	pos = cpufreq_frequency_get_table(cpu);
 
 	/* Set the cursor to the first valid freq */
 	cpufreq_next_valid(&pos);
