@@ -68,15 +68,15 @@ on property:sys.boot_completed=1
     # Enable core control with custom config
     write /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres 95
     write /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres 80
-    write /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms 800
-    write /sys/devices/system/cpu/cpu4/core_ctl/online_delay_ms 10000
+    write /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms "0 1000 600 600"
+    write /sys/devices/system/cpu/cpu4/core_ctl/online_delay_ms "0 1000 10000 10000"
     write /sys/devices/system/cpu/cpu4/core_ctl/task_thres 4
     write /sys/devices/system/cpu/cpu4/core_ctl/is_big_cluster 1
     write /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 4
-    write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 2
+    write /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 1
     write /sys/devices/system/cpu/cpu0/core_ctl/not_preferred 1
     write /sys/devices/system/cpu/cpu0/core_ctl/always_online_cpu "1 1 1 1"
-    write /sys/devices/system/cpu/cpu4/core_ctl/always_online_cpu "1 1 0 0"
+    write /sys/devices/system/cpu/cpu4/core_ctl/always_online_cpu "1 0 0 0"
     chown system:system /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
     chown system:system /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 
@@ -108,4 +108,4 @@ on property:sys.boot_completed=1
     write /sys/kernel/msm_thermal/zone7 "960000 960000 53 50"
     write /sys/kernel/msm_thermal/zone8 "768000 768000 65 60"
     write /sys/kernel/msm_thermal/sampling_ms 8000
-    write /sys/kernel/msm_thermal/enabled 1
+    write /sys/kernel/msm_thermal/enabled 0
