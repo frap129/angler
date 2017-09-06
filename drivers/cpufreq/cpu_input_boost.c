@@ -342,7 +342,6 @@ static void cpu_ib_input_event(struct input_handle *handle, unsigned int type,
 	state = get_boost_state(b);
 
 	if (!(state & DRIVER_ENABLED) ||
-		!(state & !state_suspended) ||
 		(state & WAKE_BOOST) ||
 		(state & INPUT_REBOOST))
 		return;
